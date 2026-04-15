@@ -107,11 +107,13 @@ export function Toast({
     }
   `;
 
+  const dismissFromEdge = `calc(${euiTheme.size.xs} + 4px)`;
+
   const closeCss = css`
     position: absolute;
     z-index: 2;
-    top: ${euiTheme.size.base};
-    right: ${euiTheme.size.base};
+    top: ${dismissFromEdge};
+    right: ${dismissFromEdge};
   `;
 
   return (

@@ -19,7 +19,7 @@ export type CalloutProps = {
   title: ReactNode;
   children?: ReactNode;
   color?: CalloutColor;
-  /** `m` — default padding and title/body/button scales; `s` — 12px/16px padding, 8px gap before actions; inline lead uses `xxs` title + `s` body. */
+  /** `m` — default scales; `s` — 12px/16px padding, 8px gap before actions, `xxs`/`s` inline lead, action buttons `s`, dismiss `xs`. */
   size?: CalloutSize;
   primaryLabel?: ReactNode;
   secondaryLabel?: ReactNode;
@@ -120,8 +120,9 @@ export function Callout({
   const rootPadding = isS
     ? '12px 16px 12px 16px'
     : `${euiTheme.size.base} ${euiTheme.size.xxl} ${euiTheme.size.base} ${euiTheme.size.l}`;
-  const closeInset = isS ? '12px' : euiTheme.size.base;
-  const closeInsetInline = isS ? '16px' : euiTheme.size.base;
+  const dismissFromEdge = `calc(${euiTheme.size.xs} + 4px)`;
+  const closeInset = dismissFromEdge;
+  const closeInsetInline = dismissFromEdge;
   const blockGap = isS ? '8px' : euiTheme.size.m;
   const actionsGutter = isS ? 'xs' : 's';
 
@@ -194,7 +195,7 @@ export function Callout({
         <EuiButtonIcon
           iconType="cross"
           color={btnColor}
-          size={isS ? 's' : 'xs'}
+          size="xs"
           display="empty"
           aria-label="Dismiss notification"
           onClick={() => onDismiss?.()}

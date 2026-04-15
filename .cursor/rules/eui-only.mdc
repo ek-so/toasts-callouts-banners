@@ -1,0 +1,33 @@
+---
+description: Use Elastic UI (EUI) components and theme tokens for all app UI
+alwaysApply: true
+---
+
+# EUI-only UI in this project
+
+When adding or changing **user-facing UI** (layout, typography, color, spacing, feedback, forms, navigation), use **only** [`@elastic/eui`](https://eui.elastic.co/) primitives unless this rule says otherwise.
+
+## Do
+
+- Build surfaces with EUI components (`EuiPanel`, `EuiFlexGroup`, `EuiPage`, `EuiHeader`, `EuiText`, `EuiTitle`, `EuiButton`, `EuiCallOut`, `EuiToast`, `EuiTabs`, etc.) instead of custom-styled generic HTML when an EUI equivalent exists.
+- Style with **theme tokens** from `useEuiTheme()` (`euiTheme.colors`, `euiTheme.size`, `euiTheme.border`, typography helpers like `euiFontSizeFromScale`, component tokens such as `euiTheme.components.*`) or with **EUI component props** (`color`, `paddingSize`, `gutterSize`, `size`, …).
+- Wrap the app with `EuiProvider` (already the pattern in this repo).
+
+## Do not
+
+- Introduce other component libraries or ad-hoc design systems for UI.
+- Hard-code colors, font stacks, or spacing scales that duplicate or bypass the EUI theme (no arbitrary hex/RGB, no “magic” `px`/`rem` for design rhythm when a token exists).
+
+## Scope
+
+- Applies to **application UI** (e.g. `src/**`). Tooling and config (`webpack.config.js`, `index.html`, CI) are not required to use EUI components.
+
+## If something is not possible with EUI
+
+Stop and **ask the user** for direction. In the same message, offer **concrete alternatives**, for example:
+
+- A different EUI component or pattern that meets the goal.
+- Using tokens only in minimal Emotion/`css` when EUI has no component but tokens cover the values.
+- Opening an upstream gap (EUI limitation) and a suggested short-term compromise **only after** the user agrees.
+
+Do not silently add non-EUI UI dependencies or unthemed styling without that clarification.

@@ -1,115 +1,87 @@
-import { css } from '@emotion/react';
 import { useState } from 'react';
 import {
-  EuiCode,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiHeader,
-  EuiHorizontalRule,
-  EuiIcon,
   EuiPanel,
   EuiSpacer,
   EuiTab,
   EuiTabs,
   EuiText,
-  EuiTitle,
-  euiFontSizeFromScale,
-  euiLineHeightFromBaseline,
   useEuiTheme,
 } from '@elastic/eui';
 
+import { Callout } from './components/Callout';
+import { Toast } from './components/Toast';
+
 type TopicTab = 'toasts' | 'callouts' | 'banners';
-
-function ThemeTokenSample() {
-  const { euiTheme } = useEuiTheme();
-  const sampleFontSize = euiFontSizeFromScale('s', euiTheme);
-  const sampleLineHeight = euiLineHeightFromBaseline('s', euiTheme);
-
-  return (
-    <EuiPanel paddingSize="m" hasShadow={false} hasBorder>
-      <EuiTitle size="xs">
-        <h2>Theme via useEuiTheme()</h2>
-      </EuiTitle>
-      <EuiSpacer size="s" />
-      <EuiText size="s" color="subdued">
-        Use <EuiCode>euiTheme</EuiCode> for colors, spacing, typography, borders,
-        and breakpoints in Emotion <EuiCode>css</EuiCode> or the <EuiCode>css</EuiCode>{' '}
-        prop on EUI components.
-      </EuiText>
-      <EuiSpacer size="m" />
-      <EuiFlexGroup wrap responsive={false} gutterSize="m">
-        <EuiFlexItem grow={false}>
-          <div
-            css={css`
-              width: 120px;
-              height: 72px;
-              border-radius: ${euiTheme.border.radius.medium};
-              background: ${euiTheme.colors.primary};
-              border: ${euiTheme.border.thin};
-            `}
-          />
-          <EuiSpacer size="xs" />
-          <EuiText size="xs">
-            <EuiCode>colors.primary</EuiCode>
-          </EuiText>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <div
-            css={css`
-              width: 120px;
-              height: 72px;
-              border-radius: ${euiTheme.border.radius.medium};
-              background: ${euiTheme.colors.lightShade};
-              padding: ${euiTheme.size.s};
-              font-family: ${euiTheme.font.family};
-              font-size: ${sampleFontSize};
-              line-height: ${sampleLineHeight};
-              color: ${euiTheme.colors.text};
-            `}
-          >
-            Sample text
-          </div>
-          <EuiSpacer size="xs" />
-          <EuiText size="xs">
-            <EuiCode>font</EuiCode> + <EuiCode>colors.text</EuiCode>
-          </EuiText>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiIcon
-            type="stopFill"
-            size="xl"
-            css={{ color: euiTheme.colors.accent }}
-            aria-hidden
-          />
-          <EuiSpacer size="xs" />
-          <EuiText size="xs">
-            <EuiCode>colors.accent</EuiCode> on <EuiCode>EuiIcon</EuiCode>
-          </EuiText>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </EuiPanel>
-  );
-}
 
 function TopicPanel({ topic }: { topic: TopicTab }) {
   switch (topic) {
     case 'toasts':
       return (
-        <EuiText>
-          <p>
-            <strong>Toasts</strong> — brief, transient messages (often success, error, or
-            info) anchored to a corner or edge of the screen.
-          </p>
-        </EuiText>
+        <EuiFlexGroup
+          direction="column"
+          gutterSize="m"
+          alignItems="stretch"
+          css={{ maxWidth: '100%' }}
+        >
+          <EuiFlexItem grow={false}>
+            <Toast color="neutral" title="Neutral toast">
+              Life is a canvas, and you are the artist. Paint your dreams with vibrant colors
+              and bold strokes.
+            </Toast>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <Toast color="success" title="Success toast">
+              Adventure awaits around every corner, inviting you to explore the unknown. Take a
+              leap of faith and let curiosity guide you.
+            </Toast>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <Toast color="warning" title="Warning toast">
+              The sun rises on a new day, bringing fresh opportunities and endless potential.
+            </Toast>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <Toast color="danger" title="Danger toast">
+              In a world of endless possibilities, creativity knows no bounds. Embrace the journey
+              of discovery and let your imagination soar.
+            </Toast>
+          </EuiFlexItem>
+        </EuiFlexGroup>
       );
     case 'callouts':
       return (
-        <EuiText>
-          <p>
-            <strong>Callouts</strong> — inline notices within a page or panel, such as warnings,
-            tips, or contextual help next to related UI.
-          </p>
-        </EuiText>
+        <EuiFlexGroup
+          direction="column"
+          gutterSize="m"
+          alignItems="stretch"
+          css={{ maxWidth: '100%' }}
+        >
+          <EuiFlexItem grow={false}>
+            <Callout color="neutral" title="Neutral callout">
+              Life is a canvas, and you are the artist. Paint your dreams with vibrant colors and
+              bold strokes.
+            </Callout>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <Callout color="success" title="Success callout">
+              Adventure awaits around every corner, inviting you to explore the unknown. Take a leap
+              of faith and let curiosity guide you.
+            </Callout>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <Callout color="warning" title="Warning callout">
+              The sun rises on a new day, bringing fresh opportunities and endless potential.
+            </Callout>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <Callout color="danger" title="Danger callout">
+              In a world of endless possibilities, creativity knows no bounds. Embrace the journey
+              of discovery and let your imagination soar.
+            </Callout>
+          </EuiFlexItem>
+        </EuiFlexGroup>
       );
     case 'banners':
       return (
@@ -133,24 +105,11 @@ export function App() {
     <div
       css={{
         minHeight: '100vh',
-        backgroundColor: euiTheme.colors.body,
+        boxSizing: 'border-box',
+        backgroundColor: euiTheme.colors.emptyShade,
         color: euiTheme.colors.text,
       }}
     >
-      <EuiHeader
-        position="static"
-        aria-label="Application chrome"
-        sections={[
-          {
-            items: [
-              <EuiTitle size="xs" key="app-title">
-                <span>Toasts, callouts and banners</span>
-              </EuiTitle>,
-            ],
-          },
-        ]}
-      />
-
       <div
         css={{
           maxWidth: 960,
@@ -184,17 +143,6 @@ export function App() {
         <EuiPanel paddingSize="l" hasBorder hasShadow={false}>
           <TopicPanel topic={selectedTab} />
         </EuiPanel>
-
-        <EuiHorizontalRule margin="xl" />
-
-        <EuiText size="s" color="subdued">
-          <p>
-            The app root is wrapped in <EuiCode>EuiProvider</EuiCode> per the{' '}
-            <a href="https://eui.elastic.co/docs/getting-started/setup/">EUI setup guide</a>.
-          </p>
-        </EuiText>
-        <EuiSpacer size="m" />
-        <ThemeTokenSample />
       </div>
     </div>
   );

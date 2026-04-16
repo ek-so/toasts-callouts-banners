@@ -152,6 +152,8 @@ export function Banner({
   /** Top/bottom inset on the content box: size `l` only (`size.s` ≈ 8px); M/S have no extra block padding. */
   const copyStackPaddingBlock = isL ? euiTheme.size.s : 0;
   const actionsGutter = isS ? 'xs' : 's';
+  /** Large banner: primary/secondary use `m` controls; M/S stay `s`. */
+  const actionButtonSize = isL ? 'm' : 's';
   const showPrimaryButton = !hidePrimaryButton;
   const showSecondaryButton = !hideSecondaryButton;
   const showActionButtons = showPrimaryButton || showSecondaryButton;
@@ -441,7 +443,7 @@ export function Banner({
               `}
             >
               <EuiButton
-                size="s"
+                size={actionButtonSize}
                 color={btnColor}
                 fill={false}
                 fullWidth={false}
@@ -462,7 +464,7 @@ export function Banner({
                 max-width: 100%;
               `}
             >
-              <EuiButtonEmpty size="s" color={btnColor} onClick={onSecondaryClick}>
+              <EuiButtonEmpty size={actionButtonSize} color={btnColor} onClick={onSecondaryClick}>
                 {secondaryLabel}
               </EuiButtonEmpty>
             </span>

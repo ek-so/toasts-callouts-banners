@@ -1,5 +1,4 @@
 import { css } from '@emotion/react';
-import { euiShadowLarge } from '@elastic/eui-theme-common';
 import {
   EuiButton,
   EuiButtonEmpty,
@@ -8,6 +7,7 @@ import {
   EuiFlexItem,
   EuiText,
   EuiTitle,
+  useEuiShadow,
   useEuiTheme,
 } from '@elastic/eui';
 import type { ReactNode } from 'react';
@@ -28,7 +28,7 @@ export type ToastProps = {
   className?: string;
 };
 
-/** Left stripe fill — same hues as `borderStrong*` (painted via `::after`, not `border-left`). */
+/** Left accent fill — same hues as `borderStrong*` (separate layer, not `border-left`). */
 function leftAccentColor(
   euiTheme: ReturnType<typeof useEuiTheme>['euiTheme'],
   color: ToastColor
@@ -60,7 +60,9 @@ function buttonColor(color: ToastColor): 'primary' | 'success' | 'warning' | 'da
 
 /**
  * Toast card aligned to Figma node 6150:6490 (Banners–toasts–callouts):
- * 3px left stripe (`::after`, TL/BL radius 2px), 40px end padding for dismiss, large shadow,
+ * 3px left accent (absolutely positioned span, not `::after`), 40px end padding for dismiss,
+ * `useEuiShadow('l')` (Sass `euiBottomShadow` / Emotion per EUI shadow docs) so dark mode can add
+ * the refresh-variant floating border on `::after` without conflicting with the stripe.
  * Primary CTA uses base `EuiButton` (`fill={false}` / secondary prominence) + semantic `color`;
  * second action is `EuiButtonEmpty` (matches EUI guidance for action hierarchy).
  */
@@ -81,6 +83,7 @@ export function Toast({
   const btnColor = buttonColor(color);
   const leftStripe = '3px';
   const specimenBorderRadius = '2px';
+  const shadowStyles = useEuiShadow('l', { borderAllInHighContrastMode: false });
 
   const rootCss = css`
     position: relative;
@@ -95,28 +98,27 @@ export function Toast({
     border: none;
     padding: ${euiTheme.size.base} 40px ${euiTheme.size.base} ${euiTheme.size.l};
     word-break: break-word;
-    ${euiShadowLarge(euiThemeContext, { borderAllInHighContrastMode: false })}
+    ${shadowStyles}
+  `;
 
-    &::after {
-      content: '';
-      position: absolute;
-      z-index: 0;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: ${leftStripe};
-      background-color: ${leftAccent};
-      border-top-left-radius: ${specimenBorderRadius};
-      border-bottom-left-radius: ${specimenBorderRadius};
-      pointer-events: none;
-    }
+  const stripeCss = css`
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: ${leftStripe};
+    background-color: ${leftAccent};
+    border-top-left-radius: ${specimenBorderRadius};
+    border-bottom-left-radius: ${specimenBorderRadius};
+    pointer-events: none;
   `;
 
   const dismissFromEdge = `calc(${euiTheme.size.xs} + 4px)`;
 
   const closeCss = css`
     position: absolute;
-    z-index: 2;
+    z-index: 3;
     top: ${dismissFromEdge};
     right: ${dismissFromEdge};
   `;
@@ -130,6 +132,7 @@ export function Toast({
       aria-live="polite"
       data-test-subj="toast"
     >
+      <span aria-hidden css={stripeCss} />
       <span css={closeCss}>
         <EuiButtonIcon
           iconType="cross"
@@ -145,7 +148,7 @@ export function Toast({
         data-slot={notificationSlots.contentBox}
         css={css`
           position: relative;
-          z-index: 1;
+          z-index: 2;
           display: flex;
           flex-direction: column;
           align-items: stretch;

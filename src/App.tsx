@@ -277,7 +277,7 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
               Banners
             </EuiTab>
           </EuiTabs>
-          <EuiSpacer size="s" />
+          <EuiSpacer size="m" />
           <EuiButtonGroup
             legend="Color mode"
             type="single"

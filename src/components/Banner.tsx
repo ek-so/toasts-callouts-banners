@@ -53,7 +53,7 @@ export type BannerProps = {
 /**
  * Full-width-style banner shell aligned to callout spacing and typography (no left stripe).
  * Sizes `m` / `s` match callout rhythm; `l` uses wider horizontal inset on the shell and content-box block padding. Default artwork per size is served from `public/banners/` (`/banners/*.svg`); override or hide with `image` / `image={null}`. Slot 32×32 / 64×64 / 120×120; image-to-copy gap `m` (`s`) / `base` (`m`) / `l` (`l`). Highlighted surface, subdued border; body subdued; dismiss `text`.
- * At container width ≥`layoutBreakpointPx` on the root, `notification-content-box` lays out lead and actions in a row (`size.l` gap), matching wide callouts.
+ * At container width ≥`layoutBreakpointPx` on the root, `notification-content-box` lays out lead and actions in a row with vertical centering (`align-items: center`) and `size.l` gap, matching wide callouts.
  */
 export function Banner({
   title,
@@ -66,7 +66,7 @@ export function Banner({
   onSecondaryClick,
   onDismiss,
   className,
-  layoutBreakpointPx = 1000,
+  layoutBreakpointPx = 800,
 }: BannerProps) {
   const { euiTheme } = useEuiTheme();
   const bg = euiTheme.colors.backgroundBaseHighlighted;
@@ -124,6 +124,8 @@ export function Banner({
       : euiTheme.size.xxxxl;
   /** `s`: `m` (~12px); `m`: `base`; `l`: `l`. */
   const imageLeadGap = isS ? euiTheme.size.m : isL ? euiTheme.size.l : euiTheme.size.base;
+  /** Cap lead copy width (75 × theme base ≈ 1200px at default scale). */
+  const textBoxMaxWidth = `${euiTheme.base * 75}px`;
 
   const sLeadWrapCss = css`
     min-width: 0;
@@ -148,7 +150,7 @@ export function Banner({
   const wideContentBoxRowCss = css`
     @container banner (min-width: ${wideLeadActionsMinWidth}) {
       flex-direction: row;
-      align-items: flex-start;
+      align-items: center;
       gap: ${euiTheme.size.l};
 
       [data-slot='${notificationSlots.textWrapper}'] {
@@ -206,12 +208,14 @@ export function Banner({
     ? css`
         display: block;
         min-width: 0;
+        max-width: ${textBoxMaxWidth};
       `
     : css`
         display: flex;
         flex-direction: column;
         align-items: stretch;
         gap: ${titleBodyGap};
+        max-width: ${textBoxMaxWidth};
 
         h3,
         h4 {
@@ -269,10 +273,14 @@ export function Banner({
       css={css`
         align-self: flex-start;
         max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        min-height: 0;
 
         @container banner (min-width: ${wideLeadActionsMinWidth}) {
           flex-shrink: 0;
-          align-self: center;
+          align-self: stretch;
         }
       `}
     >
@@ -282,6 +290,14 @@ export function Banner({
         alignItems="center"
         justifyContent="flexStart"
         wrap
+        css={css`
+          flex-grow: 0;
+          flex-shrink: 0;
+
+          @container banner (min-width: ${wideLeadActionsMinWidth}) {
+            flex-direction: row-reverse;
+          }
+        `}
       >
         <EuiFlexItem grow={false} css={{ minWidth: 0, maxWidth: '100%' }}>
           <span

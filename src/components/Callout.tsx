@@ -101,7 +101,7 @@ function buttonColor(color: CalloutColor): 'primary' | 'success' | 'warning' | '
 /**
  * Callout: `backgroundBase*`, thin `borderBase*` on three sides, 3px left stripe (`::after`, TL/BL radius 2px).
  * `size="m"` — stacked title (`EuiTitle` `xs`) + body (`EuiText` `s`), `xs` gap between. `size="s"` — one wrapping lead line: `EuiTitle` `xxs` + full stop + `EuiText` `s` inline in the same block.
- * At container width ≥`layoutBreakpointPx` (`container-type: inline-size` on root), `notification-content-box` is a row: text wrapper grows, button box sits to the right with `size.l` gap.
+ * At container width ≥`layoutBreakpointPx` (`container-type: inline-size` on root), `notification-content-box` is a row with `align-items: center`: text wrapper grows on the main axis, actions sit to the right with `size.l` gap.
  */
 export function Callout({
   title,
@@ -114,7 +114,7 @@ export function Callout({
   onSecondaryClick,
   onDismiss,
   className,
-  layoutBreakpointPx = 1000,
+  layoutBreakpointPx = 800,
 }: CalloutProps) {
   const { euiTheme } = useEuiTheme();
   const bg = calloutBackground(euiTheme, color);
@@ -134,6 +134,8 @@ export function Callout({
   const closeInsetInline = dismissFromEdge;
   const blockGap = isS ? '8px' : euiTheme.size.m;
   const actionsGutter = isS ? 'xs' : 's';
+  /** Cap copy width (75 × theme base ≈ 1200px at default scale). */
+  const textBoxMaxWidth = `${euiTheme.base * 75}px`;
 
   /** Size `s`: inline `h5` + body so copy wraps together (heading stays `EuiTitle`, not `<strong>` in a `<p>`). */
   const sLeadWrapCss = css`
@@ -229,7 +231,7 @@ export function Callout({
 
           @container callout (min-width: ${wideLeadActionsMinWidth}) {
             flex-direction: row;
-            align-items: flex-start;
+            align-items: center;
             gap: ${euiTheme.size.l};
 
             [data-slot='${notificationSlots.textWrapper}'] {
@@ -253,12 +255,14 @@ export function Callout({
                 ? css`
                     display: block;
                     min-width: 0;
+                    max-width: ${textBoxMaxWidth};
                   `
                 : css`
                     display: flex;
                     flex-direction: column;
                     align-items: stretch;
                     gap: ${euiTheme.size.xs};
+                    max-width: ${textBoxMaxWidth};
                   `
             }
           >
@@ -295,10 +299,14 @@ export function Callout({
           css={css`
             align-self: flex-start;
             max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            min-height: 0;
 
             @container callout (min-width: ${wideLeadActionsMinWidth}) {
               flex-shrink: 0;
-              align-self: center;
+              align-self: stretch;
             }
           `}
         >
@@ -308,6 +316,15 @@ export function Callout({
             alignItems="center"
             justifyContent="flexStart"
             wrap
+            css={css`
+              /* EUI defaults flex-grow:1 on FlexGroup; that fills the button column and ignores parent justify-end. */
+              flex-grow: 0;
+              flex-shrink: 0;
+
+              @container callout (min-width: ${wideLeadActionsMinWidth}) {
+                flex-direction: row-reverse;
+              }
+            `}
           >
             <EuiFlexItem grow={false} css={{ minWidth: 0, maxWidth: '100%' }}>
               <span

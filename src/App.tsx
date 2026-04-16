@@ -22,7 +22,7 @@ export type AppColorMode = 'LIGHT' | 'DARK';
 
 export type AppContentWidth = 'narrow' | 'wide';
 
-const DEFAULT_NARROW_MAX_WIDTH_PX = 1000;
+const DEFAULT_NARROW_MAX_WIDTH_PX = 800;
 const MIN_NARROW_MAX_WIDTH_PX = 280;
 const MAX_NARROW_MAX_WIDTH_PX = 4096;
 

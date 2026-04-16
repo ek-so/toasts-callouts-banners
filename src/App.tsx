@@ -1,15 +1,18 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useId, useState, type ReactNode } from 'react';
 import {
   EuiButtonGroup,
   EuiFieldNumber,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiIcon,
   EuiPanel,
+  EuiScreenReaderOnly,
   EuiSpacer,
   EuiSwitch,
   EuiTab,
   EuiTabs,
   EuiText,
+  EuiToolTip,
   useEuiTheme,
 } from '@elastic/eui';
 
@@ -27,8 +30,7 @@ export type AppColorMode = 'LIGHT' | 'DARK';
 export type AppContentWidth = 'narrow' | 'wide';
 
 const DEFAULT_NARROW_MAX_WIDTH_PX = 800;
-const MIN_NARROW_MAX_WIDTH_PX = 280;
-const MAX_NARROW_MAX_WIDTH_PX = 4096;
+const MIN_NARROW_MAX_WIDTH_PX = 600;
 
 /** Label above each specimen row, aligned with callouts (`Size M`, `Size S`, …). */
 function specimenSizeLabel(size: BannerSize): string {
@@ -273,6 +275,9 @@ type AppProps = {
 
 export function App({ colorMode, onColorModeChange }: AppProps) {
   const { euiTheme } = useEuiTheme();
+  const narrowBpFieldId = useId();
+  const narrowBpHelpId = `${narrowBpFieldId}-help`;
+  const narrowBpWarnId = `${narrowBpFieldId}-warn`;
   const [hideDescription, setHideDescription] = useState(false);
   const [bannersPanelMode, setBannersPanelMode] = useState<BannersPanelMode>('plain');
   const [selectedTab, setSelectedTab] = useState<TopicTab>('callouts');
@@ -288,13 +293,19 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
       setNarrowMaxWidthDraft(String(narrowMaxWidthPx));
       return;
     }
-    const clamped = Math.min(
-      MAX_NARROW_MAX_WIDTH_PX,
-      Math.max(MIN_NARROW_MAX_WIDTH_PX, parsed)
-    );
+    const clamped = Math.max(MIN_NARROW_MAX_WIDTH_PX, parsed);
     setNarrowMaxWidthPx(clamped);
     setNarrowMaxWidthDraft(String(clamped));
   };
+
+  const narrowBpDraftTrim = narrowMaxWidthDraft.trim();
+  const narrowBpParsed = Number.parseInt(narrowBpDraftTrim, 10);
+  const narrowBpHasInt = !Number.isNaN(narrowBpParsed);
+  const narrowBpMinDigits = String(MIN_NARROW_MAX_WIDTH_PX).length;
+  const narrowBpTooLow =
+    narrowBpHasInt &&
+    narrowBpParsed < MIN_NARROW_MAX_WIDTH_PX &&
+    narrowBpDraftTrim.length >= narrowBpMinDigits;
 
   useEffect(() => {
     const query = `(max-width: ${narrowMaxWidthPx - 1}px)`;
@@ -419,26 +430,81 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
               />
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiFieldNumber
-                compressed
-                min={MIN_NARROW_MAX_WIDTH_PX}
-                max={MAX_NARROW_MAX_WIDTH_PX}
-                value={narrowMaxWidthDraft}
-                onChange={(e) => setNarrowMaxWidthDraft(e.target.value)}
-                onBlur={commitNarrowMaxWidth}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    (e.target as HTMLInputElement).blur();
-                  }
-                }}
-                placeholder="Layout breakpoint"
-                aria-label="Layout breakpoint: narrow column max width in pixels; viewport below this width forces narrow mode"
-                css={{
-                  inlineSize: `calc(${euiTheme.size.base} * 7.5)`,
-                  maxInlineSize: `calc(${euiTheme.size.base} * 7.5)`,
-                  minInlineSize: 0,
-                }}
-              />
+              <EuiScreenReaderOnly>
+                <span id={narrowBpHelpId}>
+                  Narrow column max width in pixels; viewport narrower than this width forces narrow
+                  layout. Minimum {MIN_NARROW_MAX_WIDTH_PX} px.
+                </span>
+              </EuiScreenReaderOnly>
+              {narrowBpTooLow ? (
+                <EuiScreenReaderOnly>
+                  <span id={narrowBpWarnId}>
+                    Value is below the minimum of {MIN_NARROW_MAX_WIDTH_PX} px.
+                  </span>
+                </EuiScreenReaderOnly>
+              ) : null}
+              {narrowBpTooLow ? (
+                <EuiToolTip
+                  content={`Use at least ${MIN_NARROW_MAX_WIDTH_PX} px.`}
+                  position="top"
+                  title="Layout breakpoint"
+                >
+                  <span css={{ display: 'inline-flex' }}>
+                    <EuiFieldNumber
+                      compressed
+                      append={
+                        <span
+                          css={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            alignSelf: 'stretch',
+                          }}
+                        >
+                          <EuiIcon aria-hidden type="warning" color="warning" />
+                        </span>
+                      }
+                      aria-describedby={`${narrowBpHelpId} ${narrowBpWarnId}`}
+                      aria-label="Layout breakpoint"
+                      id={narrowBpFieldId}
+                      placeholder="Layout breakpoint"
+                      value={narrowMaxWidthDraft}
+                      css={{
+                        inlineSize: `calc(${euiTheme.size.base} * 7.5)`,
+                        maxInlineSize: `calc(${euiTheme.size.base} * 7.5)`,
+                        minInlineSize: 0,
+                      }}
+                      onBlur={commitNarrowMaxWidth}
+                      onChange={(e) => setNarrowMaxWidthDraft(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          (e.target as HTMLInputElement).blur();
+                        }
+                      }}
+                    />
+                  </span>
+                </EuiToolTip>
+              ) : (
+                <EuiFieldNumber
+                  compressed
+                  aria-describedby={narrowBpHelpId}
+                  aria-label="Layout breakpoint"
+                  id={narrowBpFieldId}
+                  placeholder="Layout breakpoint"
+                  value={narrowMaxWidthDraft}
+                  css={{
+                    inlineSize: `calc(${euiTheme.size.base} * 7.5)`,
+                    maxInlineSize: `calc(${euiTheme.size.base} * 7.5)`,
+                    minInlineSize: 0,
+                  }}
+                  onBlur={commitNarrowMaxWidth}
+                  onChange={(e) => setNarrowMaxWidthDraft(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      (e.target as HTMLInputElement).blur();
+                    }
+                  }}
+                />
+              )}
             </EuiFlexItem>
             <EuiFlexItem
               grow={false}
@@ -449,6 +515,7 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
                 alignItems: 'flex-start',
                 blockSize: euiTheme.size.xl,
                 minBlockSize: euiTheme.size.xl,
+                paddingInline: euiTheme.size.s,
               }}
             >
               <EuiSwitch

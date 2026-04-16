@@ -65,6 +65,7 @@ function BannerSizeSection({
   hideDescription,
   hidePrimaryButton,
   hideSecondaryButton,
+  dismissable,
   onSubduedSpecimenPanel,
   specimenDescription,
   specimenTitle,
@@ -74,6 +75,7 @@ function BannerSizeSection({
   hideDescription: boolean;
   hidePrimaryButton: boolean;
   hideSecondaryButton: boolean;
+  dismissable: boolean;
   onSubduedSpecimenPanel: boolean;
   specimenDescription: string;
   specimenTitle: string;
@@ -89,6 +91,7 @@ function BannerSizeSection({
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <Banner
+          dismissable={dismissable}
           hideDescription={hideDescription}
           hidePrimaryButton={hidePrimaryButton}
           hideSecondaryButton={hideSecondaryButton}
@@ -102,6 +105,7 @@ function BannerSizeSection({
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <Banner
+          dismissable={dismissable}
           hideDescription={hideDescription}
           hidePrimaryButton={hidePrimaryButton}
           hideSecondaryButton={hideSecondaryButton}
@@ -124,6 +128,7 @@ function TopicPanel({
   hideDescription,
   hidePrimaryButton,
   hideSecondaryButton,
+  dismissable,
   bannersPanelMode,
   specimenDescription,
   specimenTitle,
@@ -133,6 +138,7 @@ function TopicPanel({
   hideDescription: boolean;
   hidePrimaryButton: boolean;
   hideSecondaryButton: boolean;
+  dismissable: boolean;
   /** Used when `topic === 'banners'`; `plain` keeps default panel + subdued banner shells. */
   bannersPanelMode: BannersPanelMode;
   specimenDescription: string;
@@ -149,6 +155,7 @@ function TopicPanel({
         >
           <EuiFlexItem grow={false}>
             <Toast
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hidePrimaryButton}
               hideSecondaryButton={hideSecondaryButton}
@@ -158,6 +165,7 @@ function TopicPanel({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <Toast
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hidePrimaryButton}
               hideSecondaryButton={hideSecondaryButton}
@@ -167,6 +175,7 @@ function TopicPanel({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <Toast
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hidePrimaryButton}
               hideSecondaryButton={hideSecondaryButton}
@@ -176,6 +185,7 @@ function TopicPanel({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <Toast
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hidePrimaryButton}
               hideSecondaryButton={hideSecondaryButton}
@@ -202,6 +212,7 @@ function TopicPanel({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <Callout
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hidePrimaryButton}
               hideSecondaryButton={hideSecondaryButton}
@@ -215,6 +226,7 @@ function TopicPanel({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <Callout
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hidePrimaryButton}
               hideSecondaryButton={hideSecondaryButton}
@@ -228,6 +240,7 @@ function TopicPanel({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <Callout
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hidePrimaryButton}
               hideSecondaryButton={hideSecondaryButton}
@@ -241,6 +254,7 @@ function TopicPanel({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <Callout
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hidePrimaryButton}
               hideSecondaryButton={hideSecondaryButton}
@@ -265,6 +279,7 @@ function TopicPanel({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <Callout
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hidePrimaryButton}
               hideSecondaryButton={hideSecondaryButton}
@@ -278,6 +293,7 @@ function TopicPanel({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <Callout
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hidePrimaryButton}
               hideSecondaryButton={hideSecondaryButton}
@@ -291,6 +307,7 @@ function TopicPanel({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <Callout
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hidePrimaryButton}
               hideSecondaryButton={hideSecondaryButton}
@@ -304,6 +321,7 @@ function TopicPanel({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <Callout
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hidePrimaryButton}
               hideSecondaryButton={hideSecondaryButton}
@@ -326,6 +344,7 @@ function TopicPanel({
           css={{ maxWidth: '100%' }}
         >
           <BannerSizeSection
+            dismissable={dismissable}
             hideDescription={hideDescription}
             hidePrimaryButton={hidePrimaryButton}
             hideSecondaryButton={hideSecondaryButton}
@@ -339,6 +358,7 @@ function TopicPanel({
             <EuiSpacer size="l" />
           </EuiFlexItem>
           <BannerSizeSection
+            dismissable={dismissable}
             hideDescription={hideDescription}
             hidePrimaryButton={hidePrimaryButton}
             hideSecondaryButton={hideSecondaryButton}
@@ -352,6 +372,7 @@ function TopicPanel({
             <EuiSpacer size="l" />
           </EuiFlexItem>
           <BannerSizeSection
+            dismissable={dismissable}
             hideDescription={hideDescription}
             hidePrimaryButton={hidePrimaryButton}
             hideSecondaryButton={hideSecondaryButton}
@@ -381,6 +402,7 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
   const [hideDescription, setHideDescription] = useState(false);
   const [hideSecondaryButton, setHideSecondaryButton] = useState(false);
   const [hideBothButtons, setHideBothButtons] = useState(false);
+  const [dismissable, setDismissable] = useState(true);
   const [bannersPanelMode, setBannersPanelMode] = useState<BannersPanelMode>('plain');
   const [selectedTab, setSelectedTab] = useState<TopicTab>('callouts');
   const [contentWidth, setContentWidth] = useState<AppContentWidth>('narrow');
@@ -694,6 +716,13 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
                 onChange={(e) => setHideBothButtons(e.target.checked)}
               />
             </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiSwitch
+                label="Dismissable"
+                checked={dismissable}
+                onChange={(e) => setDismissable(e.target.checked)}
+              />
+            </EuiFlexItem>
           </EuiFlexGroup>
           {!hideDescription ? (
             <>
@@ -729,6 +758,7 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
           >
             <TopicPanel
               bannersPanelMode={bannersPanelMode}
+              dismissable={dismissable}
               hideDescription={hideDescription}
               hidePrimaryButton={hideBothButtons}
               hideSecondaryButton={hideBothButtons || hideSecondaryButton}

@@ -21,7 +21,7 @@ export type CalloutProps = {
   title: ReactNode;
   children?: ReactNode;
   color?: CalloutColor;
-  /** `m` — default scales, 40px end padding; `s` — 12px/16px + 40px end, 8px gap before actions, inline lead, dismiss `xs`. */
+  /** `m` — default scales, 40px end when `dismissable`; `s` — 12px / 16px insets + 40px end when dismissable. When not dismissable, end padding is `size.l` (`m`) or `size.base` (`s`). */
   size?: CalloutSize;
   primaryLabel?: ReactNode;
   secondaryLabel?: ReactNode;
@@ -40,6 +40,8 @@ export type CalloutProps = {
   hidePrimaryButton?: boolean;
   /** When true, the secondary CTA is omitted. */
   hideSecondaryButton?: boolean;
+  /** When false, the dismiss control is hidden and end padding is reduced (specimen chrome). */
+  dismissable?: boolean;
 };
 
 /** `neutral` uses primary base background / border tokens. */
@@ -124,6 +126,7 @@ export function Callout({
   hideDescription = false,
   hidePrimaryButton = false,
   hideSecondaryButton = false,
+  dismissable = true,
 }: CalloutProps) {
   const { euiTheme } = useEuiTheme();
   const bg = calloutBackground(euiTheme, color);
@@ -134,10 +137,14 @@ export function Callout({
   const thin = euiTheme.border.width.thin;
   const leftStripe = '3px';
   const isS = size === 's';
-  /** Size `s`: 12px vertical / 16px start; 40px end so dismiss does not overlap copy. */
-  const rootPadding = isS
-    ? '12px 40px 12px 16px'
-    : `${euiTheme.size.base} 40px ${euiTheme.size.base} ${euiTheme.size.l}`;
+  /** Size `s`: 40px end when dismissable; 16px end when not. Size `m`: 40 vs 24 end. */
+  const rootPadding = dismissable
+    ? isS
+      ? '12px 40px 12px 16px'
+      : `${euiTheme.size.base} 40px ${euiTheme.size.base} ${euiTheme.size.l}`
+    : isS
+      ? `12px ${euiTheme.size.base} 12px ${euiTheme.size.base}`
+      : `${euiTheme.size.base} ${euiTheme.size.l} ${euiTheme.size.base} ${euiTheme.size.l}`;
   const dismissFromEdge = `calc(${euiTheme.size.xs} + 4px)`;
   const closeInset = dismissFromEdge;
   const closeInsetInline = dismissFromEdge;
@@ -219,16 +226,18 @@ export function Callout({
       data-test-subj="callout"
       data-callout-size={size}
     >
-      <span css={closeCss}>
-        <EuiButtonIcon
-          iconType="cross"
-          color={btnColor}
-          size="xs"
-          display="empty"
-          aria-label="Dismiss notification"
-          onClick={() => onDismiss?.()}
-        />
-      </span>
+      {dismissable ? (
+        <span css={closeCss}>
+          <EuiButtonIcon
+            iconType="cross"
+            color={btnColor}
+            size="xs"
+            display="empty"
+            aria-label="Dismiss notification"
+            onClick={() => onDismiss?.()}
+          />
+        </span>
+      ) : null}
 
       <div
         data-slot={notificationSlots.contentBox}

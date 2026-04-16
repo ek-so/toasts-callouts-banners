@@ -52,6 +52,8 @@ export type BannerProps = {
   hideDescription?: boolean;
   hidePrimaryButton?: boolean;
   hideSecondaryButton?: boolean;
+  /** When false, the dismiss control is hidden and S/M end padding is reduced (specimen chrome). */
+  dismissable?: boolean;
   /**
    * When the specimen panel uses a subdued page background, use `backgroundBasePlain` on the
    * banner shell instead of `backgroundBaseHighlighted` so the banner still reads on the panel.
@@ -61,7 +63,7 @@ export type BannerProps = {
 
 /**
  * Full-width-style banner shell aligned to callout spacing and typography (no left stripe).
- * Sizes `m` / `s` match callout rhythm; `l` uses wider horizontal inset on the shell and content-box block padding. Default artwork per size is served from `public/banners/` (`/banners/*.svg`); override or hide with `image` / `image={null}`. Slot 32×32 / 64×64 / 120×120; image-to-copy gap `m` (`s`) / `base` (`m`) / `l` (`l`). Default shell uses `backgroundBaseHighlighted` (or `backgroundBasePlain` when `onSubduedSpecimenPanel`); subdued border; body subdued; dismiss `text`.
+ * Sizes `m` / `s` match callout rhythm; `l` uses wider horizontal inset on the shell and content-box block padding. Default artwork per size is served from `public/banners/` (`/banners/*.svg`); override or hide with `image` / `image={null}`. Slot 32×32 / 64×64 / 120×120; image-to-copy gap `calc(0.75×size.base)` on `s` (12px when base is 16px) / `base` (`m`) / `l` (`l`). Default shell uses `backgroundBaseHighlighted` (or `backgroundBasePlain` when `onSubduedSpecimenPanel`); subdued border; body subdued; dismiss `text`.
  * At container width ≥`layoutBreakpointPx` on the root, `notification-content-box` lays out lead and actions in a row with vertical centering (`align-items: center`) and `size.l` gap, matching wide callouts.
  */
 export function Banner({
@@ -79,6 +81,7 @@ export function Banner({
   hideDescription = false,
   hidePrimaryButton = false,
   hideSecondaryButton = false,
+  dismissable = true,
   onSubduedSpecimenPanel = false,
 }: BannerProps) {
   const { euiTheme } = useEuiTheme();
@@ -92,15 +95,20 @@ export function Banner({
   const isS = size === 's';
   const isL = size === 'l';
   /**
-   * Shell padding. Size `s` matches small callouts: `12px 40px 12px 16px` (top / right / bottom / left).
-   * M/L keep vertical padding on the inner body (`contentPaddingBlock`); horizontal only on the shell.
+   * Shell padding. Size `s` / `m`: 40px end when dismissable; `size.base` / `size.l` end when not.
+   * L keeps `xxl` / `xl` ends; vertical padding on inner body for M/L via `contentPaddingBlock`.
    */
-  const rootPadding =
-    size === 's'
+  const rootPadding = dismissable
+    ? size === 's'
       ? '12px 40px 12px 16px'
       : size === 'l'
         ? `0 ${euiTheme.size.xxl} 0 ${euiTheme.size.xl}`
-        : `0 40px 0 ${euiTheme.size.l}`;
+        : `0 40px 0 ${euiTheme.size.l}`
+    : size === 's'
+      ? `12px ${euiTheme.size.base} 12px ${euiTheme.size.base}`
+      : size === 'l'
+        ? `0 ${euiTheme.size.xxl} 0 ${euiTheme.size.xl}`
+        : `0 ${euiTheme.size.l} 0 ${euiTheme.size.l}`;
   /** Top/bottom padding for the inner body; size `s` uses shell padding instead (see `rootPadding`). */
   const contentPaddingBlock =
     size === 's' ? '0' : euiTheme.size.base;
@@ -140,14 +148,26 @@ export function Banner({
     : isL
       ? `calc(${euiTheme.size.base} * 7.5)`
       : euiTheme.size.xxxxl;
-  /** `s`: `m` (~12px); `m`: `base`; `l`: `l`. */
-  const imageLeadGap = isS ? euiTheme.size.m : isL ? euiTheme.size.l : euiTheme.size.base;
+  /** `s`: 12px at default scale via `0.75 × size.base`; `m`: `base`; `l`: `l`. */
+  const imageLeadGap = isS
+    ? `calc(${euiTheme.size.base} * 0.75)`
+    : isL
+      ? euiTheme.size.l
+      : euiTheme.size.base;
   /** Cap lead copy width (75 × theme base ≈ 1200px at default scale). */
   const textBoxMaxWidth = `${euiTheme.base * 75}px`;
 
   const sLeadWrapCss = css`
     min-width: 0;
     word-break: break-word;
+
+    h5,
+    .euiTitle {
+      margin-block: 0;
+      margin-inline: 0;
+      padding-block: 0;
+      padding-inline: 0;
+    }
   `;
   const sLeadHeadingCss = css`
     display: inline;
@@ -372,16 +392,18 @@ export function Banner({
       data-banner-size={size}
       data-banner-has-image={hasImage || undefined}
     >
-      <span css={closeCss}>
-        <EuiButtonIcon
-          iconType="cross"
-          color="text"
-          size="xs"
-          display="empty"
-          aria-label="Dismiss notification"
-          onClick={() => onDismiss?.()}
-        />
-      </span>
+      {dismissable ? (
+        <span css={closeCss}>
+          <EuiButtonIcon
+            iconType="cross"
+            color="text"
+            size="xs"
+            display="empty"
+            aria-label="Dismiss notification"
+            onClick={() => onDismiss?.()}
+          />
+        </span>
+      ) : null}
 
       <div
         css={css`

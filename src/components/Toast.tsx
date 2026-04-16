@@ -30,6 +30,7 @@ export type ToastProps = {
   hideDescription?: boolean;
   hidePrimaryButton?: boolean;
   hideSecondaryButton?: boolean;
+  dismissable?: boolean;
 };
 
 /** Left accent fill — same hues as `borderStrong*` (separate layer, not `border-left`). */
@@ -83,6 +84,7 @@ export function Toast({
   hideDescription = false,
   hidePrimaryButton = false,
   hideSecondaryButton = false,
+  dismissable = true,
 }: ToastProps) {
   const euiThemeContext = useEuiTheme();
   const { euiTheme } = euiThemeContext;
@@ -91,6 +93,7 @@ export function Toast({
   const leftStripe = '3px';
   const specimenBorderRadius = '2px';
   const shadowStyles = useEuiShadow('l', { borderAllInHighContrastMode: false });
+  const paddingEnd = dismissable ? '40px' : euiTheme.size.base;
 
   const rootCss = css`
     position: relative;
@@ -103,7 +106,7 @@ export function Toast({
     border-bottom-right-radius: ${specimenBorderRadius};
     background-color: ${euiTheme.colors.emptyShade};
     border: none;
-    padding: ${euiTheme.size.base} 40px ${euiTheme.size.base} ${euiTheme.size.l};
+    padding: ${euiTheme.size.base} ${paddingEnd} ${euiTheme.size.base} ${euiTheme.size.l};
     word-break: break-word;
     ${shadowStyles}
   `;
@@ -143,16 +146,18 @@ export function Toast({
       data-test-subj="toast"
     >
       <span aria-hidden css={stripeCss} />
-      <span css={closeCss}>
-        <EuiButtonIcon
-          iconType="cross"
-          color="text"
-          size="xs"
-          display="empty"
-          aria-label="Dismiss notification"
-          onClick={() => onDismiss?.()}
-        />
-      </span>
+      {dismissable ? (
+        <span css={closeCss}>
+          <EuiButtonIcon
+            iconType="cross"
+            color="text"
+            size="xs"
+            display="empty"
+            aria-label="Dismiss notification"
+            onClick={() => onDismiss?.()}
+          />
+        </span>
+      ) : null}
 
       <div
         data-slot={notificationSlots.contentBox}

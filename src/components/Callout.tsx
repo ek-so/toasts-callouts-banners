@@ -36,6 +36,10 @@ export type CalloutProps = {
   layoutBreakpointPx?: number;
   /** When true, body copy (`children`) is omitted; title and actions stay. */
   hideDescription?: boolean;
+  /** When true, the primary CTA is omitted (secondary and dismiss unchanged unless also hidden). */
+  hidePrimaryButton?: boolean;
+  /** When true, the secondary CTA is omitted. */
+  hideSecondaryButton?: boolean;
 };
 
 /** `neutral` uses primary base background / border tokens. */
@@ -118,6 +122,8 @@ export function Callout({
   className,
   layoutBreakpointPx = 800,
   hideDescription = false,
+  hidePrimaryButton = false,
+  hideSecondaryButton = false,
 }: CalloutProps) {
   const { euiTheme } = useEuiTheme();
   const bg = calloutBackground(euiTheme, color);
@@ -159,6 +165,9 @@ export function Callout({
   `;
 
   const wideLeadActionsMinWidth = `${layoutBreakpointPx}px`;
+  const showPrimaryButton = !hidePrimaryButton;
+  const showSecondaryButton = !hideSecondaryButton;
+  const showActionButtons = showPrimaryButton || showSecondaryButton;
 
   const rootCss = css`
     position: relative;
@@ -297,77 +306,83 @@ export function Callout({
           </div>
         </div>
 
-        <div
-          data-slot={notificationSlots.buttonBox}
-          css={css`
-            align-self: flex-start;
-            max-width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            min-height: 0;
-
-            @container callout (min-width: ${wideLeadActionsMinWidth}) {
-              flex-shrink: 0;
-              align-self: stretch;
-            }
-          `}
-        >
-          <EuiFlexGroup
-            responsive={false}
-            gutterSize={actionsGutter}
-            alignItems="center"
-            justifyContent="flexStart"
-            wrap
+        {showActionButtons ? (
+          <div
+            data-slot={notificationSlots.buttonBox}
             css={css`
-              /* EUI defaults flex-grow:1 on FlexGroup; that fills the button column and ignores parent justify-end. */
-              flex-grow: 0;
-              flex-shrink: 0;
+              align-self: flex-start;
+              max-width: 100%;
+              display: flex;
+              flex-direction: column;
+              justify-content: flex-end;
+              min-height: 0;
 
               @container callout (min-width: ${wideLeadActionsMinWidth}) {
-                flex-direction: row-reverse;
+                flex-shrink: 0;
+                align-self: stretch;
               }
             `}
           >
-            <EuiFlexItem grow={false} css={{ minWidth: 0, maxWidth: '100%' }}>
-              <span
-                css={css`
-                  display: inline-flex;
-                  max-width: 100%;
-                  flex: 0 1 auto;
-                `}
-              >
-                <EuiButton
-                  size="s"
-                  color={btnColor}
-                  fill={false}
-                  fullWidth={false}
-                  minWidth={false}
-                  onClick={onPrimaryClick}
-                >
-                  {primaryLabel}
-                </EuiButton>
-              </span>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false} css={{ minWidth: 0, flexShrink: 0 }}>
-              <span
-                css={css`
-                  display: inline-flex;
-                  flex: 0 0 auto;
-                  max-width: 100%;
-                `}
-              >
-                <EuiButtonEmpty
-                  size="s"
-                  color={btnColor}
-                  onClick={onSecondaryClick}
-                >
-                  {secondaryLabel}
-                </EuiButtonEmpty>
-              </span>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </div>
+            <EuiFlexGroup
+              responsive={false}
+              gutterSize={actionsGutter}
+              alignItems="center"
+              justifyContent="flexStart"
+              wrap
+              css={css`
+                /* EUI defaults flex-grow:1 on FlexGroup; that fills the button column and ignores parent justify-end. */
+                flex-grow: 0;
+                flex-shrink: 0;
+
+                @container callout (min-width: ${wideLeadActionsMinWidth}) {
+                  flex-direction: row-reverse;
+                }
+              `}
+            >
+              {showPrimaryButton ? (
+                <EuiFlexItem grow={false} css={{ minWidth: 0, maxWidth: '100%' }}>
+                  <span
+                    css={css`
+                      display: inline-flex;
+                      max-width: 100%;
+                      flex: 0 1 auto;
+                    `}
+                  >
+                    <EuiButton
+                      size="s"
+                      color={btnColor}
+                      fill={false}
+                      fullWidth={false}
+                      minWidth={false}
+                      onClick={onPrimaryClick}
+                    >
+                      {primaryLabel}
+                    </EuiButton>
+                  </span>
+                </EuiFlexItem>
+              ) : null}
+              {showSecondaryButton ? (
+                <EuiFlexItem grow={false} css={{ minWidth: 0, flexShrink: 0 }}>
+                  <span
+                    css={css`
+                      display: inline-flex;
+                      flex: 0 0 auto;
+                      max-width: 100%;
+                    `}
+                  >
+                    <EuiButtonEmpty
+                      size="s"
+                      color={btnColor}
+                      onClick={onSecondaryClick}
+                    >
+                      {secondaryLabel}
+                    </EuiButtonEmpty>
+                  </span>
+                </EuiFlexItem>
+              ) : null}
+            </EuiFlexGroup>
+          </div>
+        ) : null}
       </div>
     </div>
   );

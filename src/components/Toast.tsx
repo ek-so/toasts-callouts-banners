@@ -28,6 +28,8 @@ export type ToastProps = {
   className?: string;
   /** When true, body copy (`children`) is omitted; title and actions stay. */
   hideDescription?: boolean;
+  hidePrimaryButton?: boolean;
+  hideSecondaryButton?: boolean;
 };
 
 /** Left accent fill — same hues as `borderStrong*` (separate layer, not `border-left`). */
@@ -79,6 +81,8 @@ export function Toast({
   onDismiss,
   className,
   hideDescription = false,
+  hidePrimaryButton = false,
+  hideSecondaryButton = false,
 }: ToastProps) {
   const euiThemeContext = useEuiTheme();
   const { euiTheme } = euiThemeContext;
@@ -118,6 +122,9 @@ export function Toast({
   `;
 
   const dismissFromEdge = `calc(${euiTheme.size.xs} + 4px)`;
+  const showPrimaryButton = !hidePrimaryButton;
+  const showSecondaryButton = !hideSecondaryButton;
+  const showActionButtons = showPrimaryButton || showSecondaryButton;
 
   const closeCss = css`
     position: absolute;
@@ -181,55 +188,61 @@ export function Toast({
           </div>
         </div>
 
-        <div
-          data-slot={notificationSlots.buttonBox}
-          css={css`
-            align-self: flex-start;
-            max-width: 100%;
-          `}
-        >
-          <EuiFlexGroup
-            responsive={false}
-            gutterSize="s"
-            alignItems="center"
-            justifyContent="flexStart"
-            wrap
+        {showActionButtons ? (
+          <div
+            data-slot={notificationSlots.buttonBox}
+            css={css`
+              align-self: flex-start;
+              max-width: 100%;
+            `}
           >
-            <EuiFlexItem grow={false} css={{ minWidth: 0, maxWidth: '100%' }}>
-              <span
-                css={css`
-                  display: inline-flex;
-                  max-width: 100%;
-                  flex: 0 1 auto;
-                `}
-              >
-                <EuiButton
-                  size="s"
-                  color={btnColor}
-                  fill={false}
-                  fullWidth={false}
-                  minWidth={false}
-                  onClick={onPrimaryClick}
-                >
-                  {primaryLabel}
-                </EuiButton>
-              </span>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false} css={{ minWidth: 0, flexShrink: 0 }}>
-              <span
-                css={css`
-                  display: inline-flex;
-                  flex: 0 0 auto;
-                  max-width: 100%;
-                `}
-              >
-                <EuiButtonEmpty size="s" color={btnColor} onClick={onSecondaryClick}>
-                  {secondaryLabel}
-                </EuiButtonEmpty>
-              </span>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </div>
+            <EuiFlexGroup
+              responsive={false}
+              gutterSize="s"
+              alignItems="center"
+              justifyContent="flexStart"
+              wrap
+            >
+              {showPrimaryButton ? (
+                <EuiFlexItem grow={false} css={{ minWidth: 0, maxWidth: '100%' }}>
+                  <span
+                    css={css`
+                      display: inline-flex;
+                      max-width: 100%;
+                      flex: 0 1 auto;
+                    `}
+                  >
+                    <EuiButton
+                      size="s"
+                      color={btnColor}
+                      fill={false}
+                      fullWidth={false}
+                      minWidth={false}
+                      onClick={onPrimaryClick}
+                    >
+                      {primaryLabel}
+                    </EuiButton>
+                  </span>
+                </EuiFlexItem>
+              ) : null}
+              {showSecondaryButton ? (
+                <EuiFlexItem grow={false} css={{ minWidth: 0, flexShrink: 0 }}>
+                  <span
+                    css={css`
+                      display: inline-flex;
+                      flex: 0 0 auto;
+                      max-width: 100%;
+                    `}
+                  >
+                    <EuiButtonEmpty size="s" color={btnColor} onClick={onSecondaryClick}>
+                      {secondaryLabel}
+                    </EuiButtonEmpty>
+                  </span>
+                </EuiFlexItem>
+              ) : null}
+            </EuiFlexGroup>
+          </div>
+        ) : null}
       </div>
     </div>
   );

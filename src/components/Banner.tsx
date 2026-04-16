@@ -50,6 +50,8 @@ export type BannerProps = {
   layoutBreakpointPx?: number;
   /** When true, body copy (`children`) is omitted; title and actions stay. */
   hideDescription?: boolean;
+  hidePrimaryButton?: boolean;
+  hideSecondaryButton?: boolean;
   /**
    * When the specimen panel uses a subdued page background, use `backgroundBasePlain` on the
    * banner shell instead of `backgroundBaseHighlighted` so the banner still reads on the panel.
@@ -75,6 +77,8 @@ export function Banner({
   className,
   layoutBreakpointPx = 800,
   hideDescription = false,
+  hidePrimaryButton = false,
+  hideSecondaryButton = false,
   onSubduedSpecimenPanel = false,
 }: BannerProps) {
   const { euiTheme } = useEuiTheme();
@@ -110,6 +114,9 @@ export function Banner({
   /** Top/bottom inset on the content box: size `l` only (`size.s` ≈ 8px); M/S have no extra block padding. */
   const copyStackPaddingBlock = isL ? euiTheme.size.s : 0;
   const actionsGutter = isS ? 'xs' : 's';
+  const showPrimaryButton = !hidePrimaryButton;
+  const showSecondaryButton = !hideSecondaryButton;
+  const showActionButtons = showPrimaryButton || showSecondaryButton;
   const defaultBannerSrc = defaultBannerArtSrc(size);
   const resolvedImage: ReactNode | null =
     image === undefined
@@ -281,7 +288,7 @@ export function Banner({
     </div>
   );
 
-  const actionsRow = (
+  const actionsRow = showActionButtons ? (
     <div
       data-slot={notificationSlots.buttonBox}
       css={css`
@@ -313,42 +320,46 @@ export function Banner({
           }
         `}
       >
-        <EuiFlexItem grow={false} css={{ minWidth: 0, maxWidth: '100%' }}>
-          <span
-            css={css`
-              display: inline-flex;
-              max-width: 100%;
-              flex: 0 1 auto;
-            `}
-          >
-            <EuiButton
-              size="s"
-              color={btnColor}
-              fill={false}
-              fullWidth={false}
-              minWidth={false}
-              onClick={onPrimaryClick}
+        {showPrimaryButton ? (
+          <EuiFlexItem grow={false} css={{ minWidth: 0, maxWidth: '100%' }}>
+            <span
+              css={css`
+                display: inline-flex;
+                max-width: 100%;
+                flex: 0 1 auto;
+              `}
             >
-              {primaryLabel}
-            </EuiButton>
-          </span>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false} css={{ minWidth: 0, flexShrink: 0 }}>
-          <span
-            css={css`
-              display: inline-flex;
-              flex: 0 0 auto;
-              max-width: 100%;
-            `}
-          >
-            <EuiButtonEmpty size="s" color={btnColor} onClick={onSecondaryClick}>
-              {secondaryLabel}
-            </EuiButtonEmpty>
-          </span>
-        </EuiFlexItem>
+              <EuiButton
+                size="s"
+                color={btnColor}
+                fill={false}
+                fullWidth={false}
+                minWidth={false}
+                onClick={onPrimaryClick}
+              >
+                {primaryLabel}
+              </EuiButton>
+            </span>
+          </EuiFlexItem>
+        ) : null}
+        {showSecondaryButton ? (
+          <EuiFlexItem grow={false} css={{ minWidth: 0, flexShrink: 0 }}>
+            <span
+              css={css`
+                display: inline-flex;
+                flex: 0 0 auto;
+                max-width: 100%;
+              `}
+            >
+              <EuiButtonEmpty size="s" color={btnColor} onClick={onSecondaryClick}>
+                {secondaryLabel}
+              </EuiButtonEmpty>
+            </span>
+          </EuiFlexItem>
+        ) : null}
       </EuiFlexGroup>
     </div>
-  );
+  ) : null;
 
   return (
     <div

@@ -63,6 +63,8 @@ function BannerSizeSection({
   size,
   layoutBreakpointPx,
   hideDescription,
+  hidePrimaryButton,
+  hideSecondaryButton,
   onSubduedSpecimenPanel,
   specimenDescription,
   specimenTitle,
@@ -70,6 +72,8 @@ function BannerSizeSection({
   size: BannerSize;
   layoutBreakpointPx: number;
   hideDescription: boolean;
+  hidePrimaryButton: boolean;
+  hideSecondaryButton: boolean;
   onSubduedSpecimenPanel: boolean;
   specimenDescription: string;
   specimenTitle: string;
@@ -86,6 +90,8 @@ function BannerSizeSection({
       <EuiFlexItem grow={false}>
         <Banner
           hideDescription={hideDescription}
+          hidePrimaryButton={hidePrimaryButton}
+          hideSecondaryButton={hideSecondaryButton}
           layoutBreakpointPx={layoutBreakpointPx}
           onSubduedSpecimenPanel={onSubduedSpecimenPanel}
           size={size}
@@ -97,6 +103,8 @@ function BannerSizeSection({
       <EuiFlexItem grow={false}>
         <Banner
           hideDescription={hideDescription}
+          hidePrimaryButton={hidePrimaryButton}
+          hideSecondaryButton={hideSecondaryButton}
           layoutBreakpointPx={layoutBreakpointPx}
           onSubduedSpecimenPanel={onSubduedSpecimenPanel}
           size={size}
@@ -114,6 +122,8 @@ function TopicPanel({
   topic,
   layoutBreakpointPx,
   hideDescription,
+  hidePrimaryButton,
+  hideSecondaryButton,
   bannersPanelMode,
   specimenDescription,
   specimenTitle,
@@ -121,6 +131,8 @@ function TopicPanel({
   topic: TopicTab;
   layoutBreakpointPx: number;
   hideDescription: boolean;
+  hidePrimaryButton: boolean;
+  hideSecondaryButton: boolean;
   /** Used when `topic === 'banners'`; `plain` keeps default panel + subdued banner shells. */
   bannersPanelMode: BannersPanelMode;
   specimenDescription: string;
@@ -136,22 +148,38 @@ function TopicPanel({
           css={{ maxWidth: '100%' }}
         >
           <EuiFlexItem grow={false}>
-            <Toast hideDescription={hideDescription} color="neutral" title={specimenTitle}>
+            <Toast
+              hideDescription={hideDescription}
+              hidePrimaryButton={hidePrimaryButton}
+              hideSecondaryButton={hideSecondaryButton}
+              color="neutral" title={specimenTitle}>
               {specimenDescription}
             </Toast>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Toast hideDescription={hideDescription} color="success" title={specimenTitle}>
+            <Toast
+              hideDescription={hideDescription}
+              hidePrimaryButton={hidePrimaryButton}
+              hideSecondaryButton={hideSecondaryButton}
+              color="success" title={specimenTitle}>
               {specimenDescription}
             </Toast>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Toast hideDescription={hideDescription} color="warning" title={specimenTitle}>
+            <Toast
+              hideDescription={hideDescription}
+              hidePrimaryButton={hidePrimaryButton}
+              hideSecondaryButton={hideSecondaryButton}
+              color="warning" title={specimenTitle}>
               {specimenDescription}
             </Toast>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Toast hideDescription={hideDescription} color="danger" title={specimenTitle}>
+            <Toast
+              hideDescription={hideDescription}
+              hidePrimaryButton={hidePrimaryButton}
+              hideSecondaryButton={hideSecondaryButton}
+              color="danger" title={specimenTitle}>
               {specimenDescription}
             </Toast>
           </EuiFlexItem>
@@ -175,6 +203,8 @@ function TopicPanel({
           <EuiFlexItem grow={false}>
             <Callout
               hideDescription={hideDescription}
+              hidePrimaryButton={hidePrimaryButton}
+              hideSecondaryButton={hideSecondaryButton}
               layoutBreakpointPx={layoutBreakpointPx}
               size="m"
               color="neutral"
@@ -186,6 +216,8 @@ function TopicPanel({
           <EuiFlexItem grow={false}>
             <Callout
               hideDescription={hideDescription}
+              hidePrimaryButton={hidePrimaryButton}
+              hideSecondaryButton={hideSecondaryButton}
               layoutBreakpointPx={layoutBreakpointPx}
               size="m"
               color="success"
@@ -197,6 +229,8 @@ function TopicPanel({
           <EuiFlexItem grow={false}>
             <Callout
               hideDescription={hideDescription}
+              hidePrimaryButton={hidePrimaryButton}
+              hideSecondaryButton={hideSecondaryButton}
               layoutBreakpointPx={layoutBreakpointPx}
               size="m"
               color="warning"
@@ -208,6 +242,8 @@ function TopicPanel({
           <EuiFlexItem grow={false}>
             <Callout
               hideDescription={hideDescription}
+              hidePrimaryButton={hidePrimaryButton}
+              hideSecondaryButton={hideSecondaryButton}
               layoutBreakpointPx={layoutBreakpointPx}
               size="m"
               color="danger"
@@ -230,6 +266,8 @@ function TopicPanel({
           <EuiFlexItem grow={false}>
             <Callout
               hideDescription={hideDescription}
+              hidePrimaryButton={hidePrimaryButton}
+              hideSecondaryButton={hideSecondaryButton}
               layoutBreakpointPx={layoutBreakpointPx}
               size="s"
               color="neutral"
@@ -241,6 +279,8 @@ function TopicPanel({
           <EuiFlexItem grow={false}>
             <Callout
               hideDescription={hideDescription}
+              hidePrimaryButton={hidePrimaryButton}
+              hideSecondaryButton={hideSecondaryButton}
               layoutBreakpointPx={layoutBreakpointPx}
               size="s"
               color="success"
@@ -252,6 +292,8 @@ function TopicPanel({
           <EuiFlexItem grow={false}>
             <Callout
               hideDescription={hideDescription}
+              hidePrimaryButton={hidePrimaryButton}
+              hideSecondaryButton={hideSecondaryButton}
               layoutBreakpointPx={layoutBreakpointPx}
               size="s"
               color="warning"
@@ -263,6 +305,8 @@ function TopicPanel({
           <EuiFlexItem grow={false}>
             <Callout
               hideDescription={hideDescription}
+              hidePrimaryButton={hidePrimaryButton}
+              hideSecondaryButton={hideSecondaryButton}
               layoutBreakpointPx={layoutBreakpointPx}
               size="s"
               color="danger"
@@ -283,6 +327,8 @@ function TopicPanel({
         >
           <BannerSizeSection
             hideDescription={hideDescription}
+            hidePrimaryButton={hidePrimaryButton}
+            hideSecondaryButton={hideSecondaryButton}
             layoutBreakpointPx={layoutBreakpointPx}
             onSubduedSpecimenPanel={bannersPanelMode === 'subdued'}
             specimenDescription={specimenDescription}
@@ -294,6 +340,8 @@ function TopicPanel({
           </EuiFlexItem>
           <BannerSizeSection
             hideDescription={hideDescription}
+            hidePrimaryButton={hidePrimaryButton}
+            hideSecondaryButton={hideSecondaryButton}
             layoutBreakpointPx={layoutBreakpointPx}
             onSubduedSpecimenPanel={bannersPanelMode === 'subdued'}
             specimenDescription={specimenDescription}
@@ -305,6 +353,8 @@ function TopicPanel({
           </EuiFlexItem>
           <BannerSizeSection
             hideDescription={hideDescription}
+            hidePrimaryButton={hidePrimaryButton}
+            hideSecondaryButton={hideSecondaryButton}
             layoutBreakpointPx={layoutBreakpointPx}
             onSubduedSpecimenPanel={bannersPanelMode === 'subdued'}
             specimenDescription={specimenDescription}
@@ -329,6 +379,8 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
   const narrowBpHelpId = `${narrowBpFieldId}-help`;
   const narrowBpWarnId = `${narrowBpFieldId}-warn`;
   const [hideDescription, setHideDescription] = useState(false);
+  const [hideSecondaryButton, setHideSecondaryButton] = useState(false);
+  const [hideBothButtons, setHideBothButtons] = useState(false);
   const [bannersPanelMode, setBannersPanelMode] = useState<BannersPanelMode>('plain');
   const [selectedTab, setSelectedTab] = useState<TopicTab>('callouts');
   const [contentWidth, setContentWidth] = useState<AppContentWidth>('narrow');
@@ -614,11 +666,35 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
             />
           </EuiFormRow>
           <EuiSpacer size="m" />
-          <EuiSwitch
-            label="Hide description"
-            checked={hideDescription}
-            onChange={(e) => setHideDescription(e.target.checked)}
-          />
+          <EuiFlexGroup
+            responsive={false}
+            direction="row"
+            gutterSize="m"
+            alignItems="center"
+            wrap
+          >
+            <EuiFlexItem grow={false}>
+              <EuiSwitch
+                label="Hide description"
+                checked={hideDescription}
+                onChange={(e) => setHideDescription(e.target.checked)}
+              />
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiSwitch
+                label="Hide secondary button"
+                checked={hideSecondaryButton}
+                onChange={(e) => setHideSecondaryButton(e.target.checked)}
+              />
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiSwitch
+                label="Hide both buttons"
+                checked={hideBothButtons}
+                onChange={(e) => setHideBothButtons(e.target.checked)}
+              />
+            </EuiFlexItem>
+          </EuiFlexGroup>
           {!hideDescription ? (
             <>
               <EuiSpacer size="m" />
@@ -654,6 +730,8 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
             <TopicPanel
               bannersPanelMode={bannersPanelMode}
               hideDescription={hideDescription}
+              hidePrimaryButton={hideBothButtons}
+              hideSecondaryButton={hideBothButtons || hideSecondaryButton}
               layoutBreakpointPx={narrowMaxWidthPx}
               specimenDescription={specimenCopy[selectedTab].description}
               specimenTitle={specimenCopy[selectedTab].title}

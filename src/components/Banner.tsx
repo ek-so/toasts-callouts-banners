@@ -26,6 +26,16 @@ function defaultBannerArtSrc(size: BannerSize): string {
   return `${base}banners/${file}.svg`;
 }
 
+/** Specimen UI screenshot in `public/banners/specimen-screenshot.png` (M/L `screenshot` prop). */
+function specimenBannerScreenshotSrc(): string {
+  const publicPath =
+    typeof __webpack_public_path__ === 'string' && __webpack_public_path__ !== ''
+      ? __webpack_public_path__
+      : '/';
+  const base = publicPath.endsWith('/') ? publicPath : `${publicPath}/`;
+  return `${base}banners/specimen-screenshot.png`;
+}
+
 export type BannerProps = {
   title: ReactNode;
   children?: ReactNode;
@@ -59,11 +69,17 @@ export type BannerProps = {
    * banner shell instead of `backgroundBaseHighlighted` so the banner still reads on the panel.
    */
   onSubduedSpecimenPanel?: boolean;
+  /**
+   * When `true` with `size="m"` or `"l"`, uses the specimen UI screenshot instead of the default vector art.
+   * The screenshot slot is **320×160** at the default theme scale (`20×` / `10×` theme `base` px).
+   * Ignored for `size="s"` and when `image` is set (including `null`).
+   */
+  screenshot?: boolean;
 };
 
 /**
  * Full-width-style banner shell aligned to callout spacing and typography (no left stripe).
- * Sizes `m` / `s` match callout rhythm; `l` uses wider horizontal inset on the shell and content-box block padding. Default artwork per size is served from `public/banners/` (`/banners/*.svg`); override or hide with `image` / `image={null}`. Slot 32×32 / 64×64 / 120×120; image-to-copy gap `calc(0.75×size.base)` on `s` (12px when base is 16px) / `base` (`m`) / `l` (`l`). Default shell uses `backgroundBaseHighlighted` (or `backgroundBasePlain` when `onSubduedSpecimenPanel`); subdued border; body subdued; dismiss `text`.
+ * Sizes `m` / `s` match callout rhythm; `l` uses wider horizontal inset on the shell and content-box block padding. Default vector art per size is served from `public/banners/` (`/banners/*.svg`); M/L may set `screenshot` to use `specimen-screenshot.png` in a **320×160** slot (`20×` / `10×` theme `base` px); override or hide with `image` / `image={null}`. Vector slots: 32×32 / 64×64 / 120×120; image-to-copy gap `calc(0.75×size.base)` on `s` (12px when base is 16px) / `base` (`m`) / `l` (`l`). Default shell uses `backgroundBaseHighlighted` (or `backgroundBasePlain` when `onSubduedSpecimenPanel`); subdued border; body subdued; dismiss `text`.
  * At container width ≥`layoutBreakpointPx` on the root, `notification-content-box` lays out lead and actions in a row with vertical centering (`align-items: center`) and `size.l` gap, matching wide callouts.
  */
 export function Banner({
@@ -83,6 +99,7 @@ export function Banner({
   hideSecondaryButton = false,
   dismissable = true,
   onSubduedSpecimenPanel = false,
+  screenshot = false,
 }: BannerProps) {
   const { euiTheme } = useEuiTheme();
   const bg = onSubduedSpecimenPanel
@@ -94,21 +111,34 @@ export function Banner({
   const thin = euiTheme.border.width.thin;
   const isS = size === 's';
   const isL = size === 'l';
+  const useScreenshotArt = screenshot && !isS && image === undefined;
+
   /**
-   * Shell padding. Size `s` / `m`: 40px end when dismissable; `size.base` / `size.l` end when not.
-   * L keeps `xxl` / `xl` ends; vertical padding on inner body for M/L via `contentPaddingBlock`.
+   * Shell padding (top / right / bottom / left). M/L with `screenshot` art: `size.base` (~16px) start inset.
+   * Otherwise same as before: `s` / `m` dismissable ends; L `xxl`/`xl`; non-dismissable tightening.
    */
-  const rootPadding = dismissable
-    ? size === 's'
-      ? '12px 40px 12px 16px'
-      : size === 'l'
-        ? `0 ${euiTheme.size.xxl} 0 ${euiTheme.size.xl}`
-        : `0 40px 0 ${euiTheme.size.l}`
-    : size === 's'
-      ? `12px ${euiTheme.size.base} 12px ${euiTheme.size.base}`
-      : size === 'l'
-        ? `0 ${euiTheme.size.xxl} 0 ${euiTheme.size.xl}`
-        : `0 ${euiTheme.size.l} 0 ${euiTheme.size.l}`;
+  const padTop = isS ? '12px' : '0';
+  const padBottom = isS ? '12px' : '0';
+  const padRight = dismissable
+    ? isS
+      ? '40px'
+      : isL
+        ? euiTheme.size.xxl
+        : '40px'
+    : isS
+      ? euiTheme.size.base
+      : isL
+        ? euiTheme.size.xxl
+        : euiTheme.size.l;
+  const padLeft = useScreenshotArt
+    ? euiTheme.size.base
+    : isS
+      ? euiTheme.size.base
+      : isL
+        ? euiTheme.size.xl
+        : euiTheme.size.l;
+
+  const rootPadding = `${padTop} ${padRight} ${padBottom} ${padLeft}`;
   /** Top/bottom padding for the inner body; size `s` uses shell padding instead (see `rootPadding`). */
   const contentPaddingBlock =
     size === 's' ? '0' : euiTheme.size.base;
@@ -126,34 +156,46 @@ export function Banner({
   const showSecondaryButton = !hideSecondaryButton;
   const showActionButtons = showPrimaryButton || showSecondaryButton;
   const defaultBannerSrc = defaultBannerArtSrc(size);
+  const screenshotSrc = specimenBannerScreenshotSrc();
   const resolvedImage: ReactNode | null =
     image === undefined
       ? (
           <img
-            src={defaultBannerSrc}
+            src={useScreenshotArt ? screenshotSrc : defaultBannerSrc}
             alt=""
             css={css`
               display: block;
               width: 100%;
               height: 100%;
-              object-fit: contain;
+              object-fit: ${useScreenshotArt ? 'cover' : 'contain'};
+              object-position: ${useScreenshotArt ? 'center' : 'unset'};
             `}
           />
         )
       : image;
   const hasImage = resolvedImage != null;
-  /** Slot edge length: `xl` (32px), `xxxxl` (64px), or 7.5× base (120px at 16px base). */
+  /** Slot edge length for vector art: `xl` (32px), `xxxxl` (64px), or 7.5× base (120px at 16px base). */
   const imageSlotSize = isS
     ? euiTheme.size.xl
     : isL
       ? `calc(${euiTheme.size.base} * 7.5)`
       : euiTheme.size.xxxxl;
+  /** Screenshot specimen slot: 320×160 at default scale (`20` / `10` × theme `base` px). */
+  const screenshotSlotWidth = `${euiTheme.base * 20}px`;
+  const screenshotSlotHeight = `${euiTheme.base * 10}px`;
   /** `s`: 12px at default scale via `0.75 × size.base`; `m`: `base`; `l`: `l`. */
   const imageLeadGap = isS
     ? `calc(${euiTheme.size.base} * 0.75)`
     : isL
       ? euiTheme.size.l
       : euiTheme.size.base;
+  /** Screenshot M/L only: gap between image slot and copy (24px / 32px at default scale). */
+  const leadImageRowGap =
+    useScreenshotArt && size === 'm'
+      ? euiTheme.size.l
+      : useScreenshotArt && isL
+        ? euiTheme.size.xl
+        : imageLeadGap;
   /** Cap lead copy width (75 × theme base ≈ 1200px at default scale). */
   const textBoxMaxWidth = `${euiTheme.base * 75}px`;
 
@@ -198,6 +240,28 @@ export function Banner({
     }
   `;
 
+  /** Vertically center image slot and copy/actions on the row cross-axis (all banners with art). */
+  const leadWithImageRowCss = css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: ${leadImageRowGap};
+    min-width: 0;
+  `;
+
+  const leadWithImageContentBoxCss = css`
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    align-self: center;
+    gap: ${leadToActionsGap};
+    flex: 1;
+    min-width: 0;
+    padding-block: ${copyStackPaddingBlock};
+    ${wideContentBoxRowCss}
+  `;
+
   const rootCss = css`
     position: relative;
     box-sizing: border-box;
@@ -224,23 +288,50 @@ export function Banner({
     right: ${closeInsetInline};
   `;
 
-  const imageSlotCss = css`
-    width: ${imageSlotSize};
-    height: ${imageSlotSize};
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border-radius: ${specimenBorderRadius};
+  const imageSlotCss = useScreenshotArt
+    ? css`
+        position: relative;
+        width: ${screenshotSlotWidth};
+        height: ${screenshotSlotHeight};
+        flex-shrink: 0;
+        overflow: hidden;
+        border-radius: ${thin};
+        box-sizing: border-box;
 
-    img,
-    svg {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
-  `;
+        /* Fill slot; preserve aspect ratio; crop overflow (object-fit: cover). */
+        line-height: 0;
+
+        img,
+        svg {
+          position: absolute;
+          inset: 0;
+          display: block;
+          margin: 0;
+          padding: 0;
+          border: none;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+        }
+      `
+    : css`
+        width: ${imageSlotSize};
+        height: ${imageSlotSize};
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: ${specimenBorderRadius};
+
+        img,
+        svg {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+        }
+      `;
 
   const leadColumnCss = isS
     ? css`
@@ -391,6 +482,7 @@ export function Banner({
       data-test-subj="banner"
       data-banner-size={size}
       data-banner-has-image={hasImage || undefined}
+      data-banner-screenshot={useScreenshotArt || undefined}
     >
       {dismissable ? (
         <span css={closeCss}>
@@ -413,34 +505,11 @@ export function Banner({
         `}
       >
         {hasImage ? (
-          <div
-            css={css`
-              display: flex;
-              flex-direction: row;
-              align-items: center;
-              gap: ${imageLeadGap};
-              min-width: 0;
-            `}
-          >
+          <div css={leadWithImageRowCss}>
             <div data-slot={notificationSlots.imageBox} css={imageSlotCss}>
               {resolvedImage}
             </div>
-            <div
-              data-slot={notificationSlots.contentBox}
-              css={css`
-                display: flex;
-                flex-direction: column;
-                align-items: stretch;
-                justify-content: flex-start;
-                /* Intrinsic height + padding; stretch matched image height and left slack below actions. */
-                align-self: center;
-                gap: ${leadToActionsGap};
-                flex: 1;
-                min-width: 0;
-                padding-block: ${copyStackPaddingBlock};
-                ${wideContentBoxRowCss}
-              `}
-            >
+            <div data-slot={notificationSlots.contentBox} css={leadWithImageContentBoxCss}>
               <div
                 data-slot={notificationSlots.textWrapper}
                 css={css`

@@ -448,7 +448,26 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
               Toasts
             </EuiTab>
           </EuiTabs>
-          <EuiSpacer size="m" />
+        </div>
+      </header>
+
+      <main
+        id="topic-panel"
+        role="tabpanel"
+        aria-labelledby={`${selectedTab}-tab`}
+        css={{
+          flex: 1,
+          minHeight: 0,
+          overflow: 'auto',
+        }}
+      >
+        <div
+          css={{
+            ...pageFrame,
+            paddingTop: euiTheme.size.m,
+            paddingBottom: euiTheme.size.l,
+          }}
+        >
           <EuiFlexGroup
             responsive={false}
             direction="row"
@@ -620,25 +639,6 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
               </EuiFormRow>
             </>
           ) : null}
-        </div>
-      </header>
-
-      <main
-        id="topic-panel"
-        role="tabpanel"
-        aria-labelledby={`${selectedTab}-tab`}
-        css={{
-          flex: 1,
-          minHeight: 0,
-          overflow: 'auto',
-        }}
-      >
-        <div
-          css={{
-            ...pageFrame,
-            paddingBottom: euiTheme.size.l,
-          }}
-        >
           <EuiSpacer size="l" />
 
           <EuiPanel

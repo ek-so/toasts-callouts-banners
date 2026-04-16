@@ -34,6 +34,8 @@ export type CalloutProps = {
    * Specimens pass the app “Layout breakpoint” value so it stays in sync with narrow column width.
    */
   layoutBreakpointPx?: number;
+  /** When true, body copy (`children`) is omitted; title and actions stay. */
+  hideDescription?: boolean;
 };
 
 /** `neutral` uses primary base background / border tokens. */
@@ -115,6 +117,7 @@ export function Callout({
   onDismiss,
   className,
   layoutBreakpointPx = 800,
+  hideDescription = false,
 }: CalloutProps) {
   const { euiTheme } = useEuiTheme();
   const bg = calloutBackground(euiTheme, color);
@@ -271,10 +274,10 @@ export function Callout({
                 <EuiTitle size="xxs">
                   <h5 css={sLeadHeadingCss}>
                     {title}
-                    {'.'}
+                    {!hideDescription ? '.' : null}
                   </h5>
                 </EuiTitle>
-                {children != null ? (
+                {!hideDescription && children != null ? (
                   <>
                     {' '}
                     <EuiText size="s" component="span" css={sLeadBodyCss}>
@@ -288,7 +291,7 @@ export function Callout({
                 <EuiTitle size="xs">
                   <h4>{title}</h4>
                 </EuiTitle>
-                {children ? <EuiText size="s">{children}</EuiText> : null}
+                {!hideDescription && children ? <EuiText size="s">{children}</EuiText> : null}
               </>
             )}
           </div>

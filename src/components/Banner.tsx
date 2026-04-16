@@ -48,6 +48,8 @@ export type BannerProps = {
    * Specimens pass the app “Layout breakpoint” value.
    */
   layoutBreakpointPx?: number;
+  /** When true, body copy (`children`) is omitted; title and actions stay. */
+  hideDescription?: boolean;
 };
 
 /**
@@ -67,6 +69,7 @@ export function Banner({
   onDismiss,
   className,
   layoutBreakpointPx = 800,
+  hideDescription = false,
 }: BannerProps) {
   const { euiTheme } = useEuiTheme();
   const bg = euiTheme.colors.backgroundBaseHighlighted;
@@ -243,13 +246,16 @@ export function Banner({
           <EuiTitle size="xxs">
             <h5 css={sLeadHeadingCss}>
               {title}
-              {'.'}
+              {!hideDescription ? '.' : null}
             </h5>
           </EuiTitle>
-          {children != null ? (
-            <EuiText size="s" component="span" color="subdued" css={sLeadBodyCss}>
-              {children}
-            </EuiText>
+          {!hideDescription && children != null ? (
+            <>
+              {' '}
+              <EuiText size="s" component="span" color="subdued" css={sLeadBodyCss}>
+                {children}
+              </EuiText>
+            </>
           ) : null}
         </div>
       ) : (
@@ -257,7 +263,7 @@ export function Banner({
           <EuiTitle size={isL ? 's' : 'xs'}>
             {isL ? <h3>{title}</h3> : <h4>{title}</h4>}
           </EuiTitle>
-          {children ? (
+          {!hideDescription && children ? (
             <EuiText size="s" color="subdued">
               {children}
             </EuiText>

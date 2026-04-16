@@ -6,6 +6,7 @@ import {
   EuiFlexItem,
   EuiPanel,
   EuiSpacer,
+  EuiSwitch,
   EuiTab,
   EuiTabs,
   EuiText,
@@ -47,10 +48,12 @@ function BannerSizeSection({
   size,
   children,
   layoutBreakpointPx,
+  hideDescription,
 }: {
   size: BannerSize;
   children: ReactNode;
   layoutBreakpointPx: number;
+  hideDescription: boolean;
 }) {
   const bannerTitle = bannerTitleText(size);
   return (
@@ -63,12 +66,18 @@ function BannerSizeSection({
         </EuiText>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <Banner layoutBreakpointPx={layoutBreakpointPx} size={size} title={bannerTitle}>
+        <Banner
+          hideDescription={hideDescription}
+          layoutBreakpointPx={layoutBreakpointPx}
+          size={size}
+          title={bannerTitle}
+        >
           {children}
         </Banner>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <Banner
+          hideDescription={hideDescription}
           layoutBreakpointPx={layoutBreakpointPx}
           size={size}
           image={null}
@@ -84,9 +93,11 @@ function BannerSizeSection({
 function TopicPanel({
   topic,
   layoutBreakpointPx,
+  hideDescription,
 }: {
   topic: TopicTab;
   layoutBreakpointPx: number;
+  hideDescription: boolean;
 }) {
   switch (topic) {
     case 'toasts':
@@ -98,24 +109,24 @@ function TopicPanel({
           css={{ maxWidth: '100%' }}
         >
           <EuiFlexItem grow={false}>
-            <Toast color="neutral" title="Neutral toast">
+            <Toast hideDescription={hideDescription} color="neutral" title="Neutral toast">
               Life is a canvas, and you are the artist. Paint your dreams with vibrant colors
               and bold strokes.
             </Toast>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Toast color="success" title="Success toast">
+            <Toast hideDescription={hideDescription} color="success" title="Success toast">
               Adventure awaits around every corner, inviting you to explore the unknown. Take a
               leap of faith and let curiosity guide you.
             </Toast>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Toast color="warning" title="Warning toast">
+            <Toast hideDescription={hideDescription} color="warning" title="Warning toast">
               The sun rises on a new day, bringing fresh opportunities and endless potential.
             </Toast>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Toast color="danger" title="Danger toast">
+            <Toast hideDescription={hideDescription} color="danger" title="Danger toast">
               In a world of endless possibilities, creativity knows no bounds. Embrace the journey
               of discovery and let your imagination soar.
             </Toast>
@@ -138,24 +149,24 @@ function TopicPanel({
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Callout layoutBreakpointPx={layoutBreakpointPx} size="m" color="neutral" title="Neutral callout">
+            <Callout layoutBreakpointPx={layoutBreakpointPx} hideDescription={hideDescription} size="m" color="neutral" title="Neutral callout">
               Life is a canvas, and you are the artist. Paint your dreams with vibrant colors and
               bold strokes.
             </Callout>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Callout layoutBreakpointPx={layoutBreakpointPx} size="m" color="success" title="Success callout">
+            <Callout layoutBreakpointPx={layoutBreakpointPx} hideDescription={hideDescription} size="m" color="success" title="Success callout">
               Adventure awaits around every corner, inviting you to explore the unknown. Take a leap
               of faith and let curiosity guide you.
             </Callout>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Callout layoutBreakpointPx={layoutBreakpointPx} size="m" color="warning" title="Warning callout">
+            <Callout layoutBreakpointPx={layoutBreakpointPx} hideDescription={hideDescription} size="m" color="warning" title="Warning callout">
               The sun rises on a new day, bringing fresh opportunities and endless potential.
             </Callout>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Callout layoutBreakpointPx={layoutBreakpointPx} size="m" color="danger" title="Danger callout">
+            <Callout layoutBreakpointPx={layoutBreakpointPx} hideDescription={hideDescription} size="m" color="danger" title="Danger callout">
               In a world of endless possibilities, creativity knows no bounds. Embrace the journey
               of discovery and let your imagination soar.
             </Callout>
@@ -172,22 +183,22 @@ function TopicPanel({
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Callout layoutBreakpointPx={layoutBreakpointPx} size="s" color="neutral" title="Neutral callout">
+            <Callout layoutBreakpointPx={layoutBreakpointPx} hideDescription={hideDescription} size="s" color="neutral" title="Neutral callout">
               Shorter copy for compact callouts. Adjust padding and type scale for dense layouts.
             </Callout>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Callout layoutBreakpointPx={layoutBreakpointPx} size="s" color="success" title="Success callout">
+            <Callout layoutBreakpointPx={layoutBreakpointPx} hideDescription={hideDescription} size="s" color="success" title="Success callout">
               Keep body text brief so the smaller type stays readable at a glance.
             </Callout>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Callout layoutBreakpointPx={layoutBreakpointPx} size="s" color="warning" title="Warning callout">
+            <Callout layoutBreakpointPx={layoutBreakpointPx} hideDescription={hideDescription} size="s" color="warning" title="Warning callout">
               Tighter padding and smaller title and body type keep the footprint small.
             </Callout>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <Callout layoutBreakpointPx={layoutBreakpointPx} size="s" color="danger" title="Danger callout">
+            <Callout layoutBreakpointPx={layoutBreakpointPx} hideDescription={hideDescription} size="s" color="danger" title="Danger callout">
               Same structure as size M: stripe, borders, and actions—just a denser layout.
             </Callout>
           </EuiFlexItem>
@@ -201,7 +212,11 @@ function TopicPanel({
           alignItems="stretch"
           css={{ maxWidth: '100%' }}
         >
-          <BannerSizeSection layoutBreakpointPx={layoutBreakpointPx} size="l">
+          <BannerSizeSection
+            layoutBreakpointPx={layoutBreakpointPx}
+            hideDescription={hideDescription}
+            size="l"
+          >
             Extra padding and larger type give this layout more presence when the story is important
             or a bit longer than a medium banner comfortably fits. Use it for account-level notices,
             policy updates, or guided setup where the illustration and headline should read as a
@@ -210,7 +225,11 @@ function TopicPanel({
           <EuiFlexItem grow={false}>
             <EuiSpacer size="l" />
           </EuiFlexItem>
-          <BannerSizeSection layoutBreakpointPx={layoutBreakpointPx} size="m">
+          <BannerSizeSection
+            layoutBreakpointPx={layoutBreakpointPx}
+            hideDescription={hideDescription}
+            size="m"
+          >
             We will deploy updates on Tuesday 02:00–04:00 UTC. Brief interruptions are possible while
             nodes restart. If you see errors, wait a few minutes and refresh; status updates will
             appear on the platform status page once work completes.
@@ -218,7 +237,11 @@ function TopicPanel({
           <EuiFlexItem grow={false}>
             <EuiSpacer size="l" />
           </EuiFlexItem>
-          <BannerSizeSection layoutBreakpointPx={layoutBreakpointPx} size="s">
+          <BannerSizeSection
+            layoutBreakpointPx={layoutBreakpointPx}
+            hideDescription={hideDescription}
+            size="s"
+          >
             Inline title and body suit dense headers and toolbars: you keep primary and secondary
             actions without sacrificing hierarchy. Keep sentences short so the smaller type stays
             readable at a glance.
@@ -237,6 +260,7 @@ type AppProps = {
 
 export function App({ colorMode, onColorModeChange }: AppProps) {
   const { euiTheme } = useEuiTheme();
+  const [hideDescription, setHideDescription] = useState(false);
   const [selectedTab, setSelectedTab] = useState<TopicTab>('callouts');
   const [contentWidth, setContentWidth] = useState<AppContentWidth>('narrow');
   const [narrowMaxWidthPx, setNarrowMaxWidthPx] = useState(DEFAULT_NARROW_MAX_WIDTH_PX);
@@ -399,6 +423,13 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
               />
             </EuiFlexItem>
           </EuiFlexGroup>
+          <EuiSpacer size="xs" />
+          <EuiSwitch
+            compressed
+            label="Hide description"
+            checked={hideDescription}
+            onChange={(e) => setHideDescription(e.target.checked)}
+          />
         </div>
       </header>
 
@@ -421,7 +452,11 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
           <EuiSpacer size="l" />
 
           <EuiPanel paddingSize="l" hasBorder hasShadow={false}>
-            <TopicPanel layoutBreakpointPx={narrowMaxWidthPx} topic={selectedTab} />
+            <TopicPanel
+              layoutBreakpointPx={narrowMaxWidthPx}
+              hideDescription={hideDescription}
+              topic={selectedTab}
+            />
           </EuiPanel>
         </div>
       </main>

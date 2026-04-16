@@ -26,6 +26,8 @@ export type ToastProps = {
   onSecondaryClick?: () => void;
   onDismiss?: () => void;
   className?: string;
+  /** When true, body copy (`children`) is omitted; title and actions stay. */
+  hideDescription?: boolean;
 };
 
 /** Left accent fill — same hues as `borderStrong*` (separate layer, not `border-left`). */
@@ -76,6 +78,7 @@ export function Toast({
   onSecondaryClick,
   onDismiss,
   className,
+  hideDescription = false,
 }: ToastProps) {
   const euiThemeContext = useEuiTheme();
   const { euiTheme } = euiThemeContext;
@@ -174,7 +177,7 @@ export function Toast({
             <EuiTitle size="xs">
               <h4>{title}</h4>
             </EuiTitle>
-            {children ? <EuiText size="s">{children}</EuiText> : null}
+            {!hideDescription && children ? <EuiText size="s">{children}</EuiText> : null}
           </div>
         </div>
 

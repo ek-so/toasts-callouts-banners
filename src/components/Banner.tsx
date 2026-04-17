@@ -79,7 +79,7 @@ export type BannerProps = {
 
 /**
  * Full-width-style banner shell aligned to callout spacing and typography (no left stripe).
- * Sizes `m` / `s` match callout rhythm; `l` uses wider horizontal inset on the shell and content-box block padding. Default vector art per size is served from `public/banners/` (`/banners/*.svg`); size `l` may set `screenshot` to use `specimen-screenshot.png` in a **320×160** slot (`20×` / `10×` theme `base` px); override or hide with `image` / `image={null}`. Vector slots: 32×32 / 72×72 (`4.5×` theme `base` on M) / 120×120; image-to-copy gap `calc(0.75×size.base)` on `s` (12px when base is 16px) / `base` (`m`) / `l` (`l`). Default shell uses `backgroundBaseHighlighted` (or `backgroundBasePlain` when `onSubduedSpecimenPanel`); subdued border; body subdued; dismiss `text`.
+ * Sizes `m` / `s` match callout rhythm; `l` uses wider horizontal inset on the shell and content-box block padding. Default vector art per size is served from `public/banners/` (`/banners/*.svg`); size `l` may set `screenshot` to use `specimen-screenshot.png` in a **320×160** slot (`20×` / `10×` theme `base` px); override or hide with `image` / `image={null}`. Vector slots: 32×32 / 80×80 (`5×` theme `base` on M) / 120×120; image-to-copy gap `calc(0.75×size.base)` on `s` (12px when base is 16px) / `base` (`m`) / `l` (`l`). Default shell uses `backgroundBaseHighlighted` (or `backgroundBasePlain` when `onSubduedSpecimenPanel`); subdued border; body subdued; dismiss `text`.
  * At container width ≥`layoutBreakpointPx` on the root, `notification-content-box` lays out lead and actions in a row with vertical centering (`align-items: center`) and `size.xxl` gap (~40px at default scale), matching wide callouts.
  */
 export function Banner({
@@ -176,12 +176,12 @@ export function Banner({
         )
       : image;
   const hasImage = resolvedImage != null;
-  /** Slot edge length for vector art: `xl` (32px), `4.5×base` (72px at 16px base) for M, or 7.5×base (120px) for L. */
+  /** Slot edge length for vector art: `xl` (32px), `5×base` (80px at 16px base) for M, or 7.5×base (120px) for L. */
   const imageSlotSize = isS
     ? euiTheme.size.xl
     : isL
       ? `calc(${euiTheme.size.base} * 7.5)`
-      : `${euiTheme.base * 4.5}px`;
+      : `${euiTheme.base * 5}px`;
   /** Screenshot specimen slot: 320×160 at default scale (`20` / `10` × theme `base` px). */
   const screenshotSlotWidth = `${euiTheme.base * 20}px`;
   const screenshotSlotHeight = `${euiTheme.base * 10}px`;

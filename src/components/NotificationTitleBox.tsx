@@ -4,7 +4,7 @@ import type { ComponentProps, ReactNode } from 'react';
 
 export type NotificationSemanticColor = 'success' | 'warning' | 'danger' | 'neutral';
 
-function statusIcon(color: NotificationSemanticColor): {
+export function notificationStatusIconProps(color: NotificationSemanticColor): {
   type: ComponentProps<typeof EuiIcon>['type'];
   iconColor: ComponentProps<typeof EuiIcon>['color'];
 } {
@@ -20,9 +20,6 @@ function statusIcon(color: NotificationSemanticColor): {
   }
 }
 
-/**
- * Title row only: semantic status icon + title (`children`), so body copy can sit below at full text width.
- */
 const iconSlotCss = css`
   width: 16px;
   height: 16px;
@@ -39,6 +36,15 @@ const iconSlotCss = css`
   }
 `;
 
+/** 16×16 semantic glyph for toasts / callouts (also composed inside `NotificationTitleBox`). */
+export function NotificationStatusIcon({ color }: { color: NotificationSemanticColor }) {
+  const { type, iconColor } = notificationStatusIconProps(color);
+  return <EuiIcon aria-hidden type={type} color={iconColor} css={iconSlotCss} />;
+}
+
+/**
+ * Title row only: semantic status icon + title (`children`), so body copy can sit below at full text width.
+ */
 export function NotificationTitleBox({
   color,
   children,
@@ -47,7 +53,6 @@ export function NotificationTitleBox({
   children: ReactNode;
 }) {
   const { euiTheme } = useEuiTheme();
-  const { type, iconColor } = statusIcon(color);
   return (
     <EuiFlexGroup
       responsive={false}
@@ -60,7 +65,7 @@ export function NotificationTitleBox({
       `}
     >
       <EuiFlexItem grow={false}>
-        <EuiIcon aria-hidden type={type} color={iconColor} css={iconSlotCss} />
+        <NotificationStatusIcon color={color} />
       </EuiFlexItem>
       <EuiFlexItem
         grow

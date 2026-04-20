@@ -11,7 +11,7 @@ import {
 } from '@elastic/eui';
 import type { ReactNode } from 'react';
 
-import { NotificationTitleBox } from './NotificationTitleBox';
+import { NotificationStatusIcon, NotificationTitleBox } from './NotificationTitleBox';
 import { notificationSlots } from './notificationSlots';
 
 export type CalloutColor = 'success' | 'warning' | 'danger' | 'neutral';
@@ -109,7 +109,7 @@ function buttonColor(color: CalloutColor): 'primary' | 'success' | 'warning' | '
 
 /**
  * Callout: `backgroundBase*`, thin `borderBase*` on three sides, 3px left stripe (`::after`, TL/BL radius 2px).
- * `size="m"` — title row (status icon + `EuiTitle` `xs`) then body (`EuiText` `s`), `xs` gap. `size="s"` — compact title row (icon + `EuiTitle` `xxs`) then body on the next line (`EuiText` `s`).
+ * `size="m"` — title row (status icon + `EuiTitle` `xs`) then body (`EuiText` `s`), `xs` gap. `size="s"` — block lead: `inline-block` icon, then inline title + inline body so the sentence wraps with a shared baseline.
  * At container width ≥`layoutBreakpointPx` (`container-type: inline-size` on root), `notification-content-box` is a row with `align-items: center`: text wrapper grows on the main axis, actions sit to the right with `size.xxl` gap (~40px at default scale).
  */
 export function Callout({
@@ -154,13 +154,33 @@ export function Callout({
   /** Cap copy width (75 × theme base ≈ 1200px at default scale). */
   const textBoxMaxWidth = `${euiTheme.base * 75}px`;
 
-  /** Size `s`: word-break on the title column beside the status icon. */
+  /** Size `s`: icon in its own `inline-block` so title + body stay inline siblings and share one text baseline. */
   const sLeadWrapCss = css`
+    display: block;
     min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
     word-break: break-word;
   `;
+  const sIconLeadCss = css`
+    display: inline-block;
+    margin-inline-end: calc(${euiTheme.size.base} * 0.25);
+    line-height: 0;
+    vertical-align: middle;
+    transform: translateY(calc(${euiTheme.size.base} * -0.125));
+  `;
   const sLeadHeadingCss = css`
+    display: inline;
     margin: 0;
+    vertical-align: baseline;
+  `;
+  const sLeadBodyCss = css`
+    &.euiText {
+      display: inline;
+      margin-block: 0;
+      margin-inline: 0;
+      vertical-align: baseline;
+    }
   `;
 
   const wideLeadActionsMinWidth = `${layoutBreakpointPx}px`;
@@ -263,31 +283,43 @@ export function Callout({
         >
           <div
             data-slot={notificationSlots.textBox}
-            css={css`
-              display: flex;
-              flex-direction: column;
-              align-items: stretch;
-              gap: ${euiTheme.size.xs};
-              min-width: 0;
-              max-width: ${textBoxMaxWidth};
-            `}
+            css={
+              isS
+                ? css`
+                    display: block;
+                    min-width: 0;
+                    max-width: ${textBoxMaxWidth};
+                  `
+                : css`
+                    display: flex;
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: ${euiTheme.size.xs};
+                    min-width: 0;
+                    max-width: ${textBoxMaxWidth};
+                  `
+            }
           >
             {isS ? (
-              <>
-                <NotificationTitleBox color={color}>
-                  <div css={sLeadWrapCss}>
-                    <EuiTitle size="xxs">
-                      <h5 css={sLeadHeadingCss}>
-                        {title}
-                        {!hideDescription ? '.' : null}
-                      </h5>
-                    </EuiTitle>
-                  </div>
-                </NotificationTitleBox>
+              <div css={sLeadWrapCss}>
+                <span css={sIconLeadCss}>
+                  <NotificationStatusIcon color={color} />
+                </span>
+                <EuiTitle size="xxs">
+                  <h5 css={sLeadHeadingCss}>
+                    {title}
+                    {!hideDescription ? '.' : null}
+                  </h5>
+                </EuiTitle>
                 {!hideDescription && children != null ? (
-                  <EuiText size="s">{children}</EuiText>
+                  <>
+                    {' '}
+                    <EuiText size="s" component="span" css={sLeadBodyCss}>
+                      {children}
+                    </EuiText>
+                  </>
                 ) : null}
-              </>
+              </div>
             ) : (
               <>
                 <NotificationTitleBox color={color}>

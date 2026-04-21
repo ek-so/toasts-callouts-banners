@@ -1,45 +1,54 @@
 import { css } from '@emotion/react';
-import { EuiFlexGroup, EuiFlexItem, EuiIcon, useEuiTheme } from '@elastic/eui';
-import type { ComponentProps, ReactNode } from 'react';
+import { EuiFlexGroup, EuiFlexItem, useEuiTheme } from '@elastic/eui';
+import type { ReactNode } from 'react';
 
 export type NotificationSemanticColor = 'success' | 'warning' | 'danger' | 'neutral';
 
-export function notificationStatusIconProps(color: NotificationSemanticColor): {
-  type: ComponentProps<typeof EuiIcon>['type'];
-  iconColor: ComponentProps<typeof EuiIcon>['color'];
-} {
-  switch (color) {
-    case 'success':
-      return { type: 'checkCircle', iconColor: 'success' };
-    case 'warning':
-      return { type: 'warning', iconColor: 'warning' };
-    case 'danger':
-      return { type: 'error', iconColor: 'danger' };
-    case 'neutral':
-      return { type: 'info', iconColor: 'primary' };
-  }
+/** Art in `public/notification-icons/` (served as `/notification-icons/*.svg`); copied to `dist/notification-icons/` on `yarn build`. */
+export function notificationStatusIconSrc(color: NotificationSemanticColor): string {
+  const file =
+    color === 'success'
+      ? 'success'
+      : color === 'warning'
+        ? 'warning'
+        : color === 'danger'
+          ? 'error'
+          : 'info';
+  const publicPath =
+    typeof __webpack_public_path__ === 'string' && __webpack_public_path__ !== ''
+      ? __webpack_public_path__
+      : '/';
+  const base = publicPath.endsWith('/') ? publicPath : `${publicPath}/`;
+  return `${base}notification-icons/${file}.svg`;
 }
 
-const iconSlotCss = css`
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  line-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+function iconSlotCssFor(slotPx: 16 | 20) {
+  return css`
+    width: ${slotPx}px;
+    height: ${slotPx}px;
+    flex-shrink: 0;
+    line-height: 0;
+    display: block;
+    object-fit: contain;
+  `;
+}
 
-  & > svg,
-  & svg {
-    width: 16px;
-    height: 16px;
-  }
-`;
-
-/** 16×16 semantic glyph for toasts / callouts (also composed inside `NotificationTitleBox`). */
-export function NotificationStatusIcon({ color }: { color: NotificationSemanticColor }) {
-  const { type, iconColor } = notificationStatusIconProps(color);
-  return <EuiIcon aria-hidden type={type} color={iconColor} css={iconSlotCss} />;
+/** Status artwork; `slotPx` **20** for M callout / toast title row, default **16** for size-`s` callout. */
+export function NotificationStatusIcon({
+  color,
+  slotPx = 16,
+}: {
+  color: NotificationSemanticColor;
+  slotPx?: 16 | 20;
+}) {
+  return (
+    <img
+      alt=""
+      src={notificationStatusIconSrc(color)}
+      css={iconSlotCssFor(slotPx)}
+      draggable={false}
+    />
+  );
 }
 
 /**
@@ -65,7 +74,7 @@ export function NotificationTitleBox({
       `}
     >
       <EuiFlexItem grow={false}>
-        <NotificationStatusIcon color={color} />
+        <NotificationStatusIcon color={color} slotPx={20} />
       </EuiFlexItem>
       <EuiFlexItem
         grow

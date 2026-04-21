@@ -11,7 +11,7 @@ import {
 } from '@elastic/eui';
 import type { ReactNode } from 'react';
 
-import { NotificationIconLead } from './NotificationTitleBox';
+import { NotificationIconBox, NotificationStatusIcon } from './NotificationTitleBox';
 import { notificationSlots } from './notificationSlots';
 
 export type CalloutColor = 'success' | 'warning' | 'danger' | 'neutral';
@@ -109,8 +109,8 @@ function buttonColor(color: CalloutColor): 'primary' | 'success' | 'warning' | '
 
 /**
  * Callout: `backgroundBase*`, thin `borderBase*` on three sides, 3px left stripe (`::after`, `1px` radius).
- * `size="m"` — status icon (20px) in a leading column, then copy: `EuiTitle` `xs`, body (`EuiText` `s`), `xs` gap. `size="s"` — 16px icon lead, then inline `EuiTitle` `xxs` + inline body so the header and description wrap as one line box (shared baseline).
- * At container width ≥`layoutBreakpointPx` (`container-type: inline-size` on root), the **content** region (everything right of the icon) is a row with `align-items: center`: text wrapper grows, actions sit to the right with `size.xxl` gap (~40px at default scale).
+ * `size="m"` — status icon (20px) in {@link NotificationIconBox}, beside copy: `EuiTitle` `xs`, body (`EuiText` `s`), `xs` gap. `size="s"` — 16px icon, then inline `EuiTitle` `xxs` + inline body (shared baseline).
+ * The icon box lives **inside** `notification-text-wrapper` next to the text box (same in narrow and wide). At container width ≥`layoutBreakpointPx`, that wrapper and actions form a row (`align-items: center`, `size.xxl` gap).
  */
 export function Callout({
   title,
@@ -157,7 +157,7 @@ export function Callout({
   /** Cap copy width (75 × theme base ≈ 1200px at default scale). */
   const textBoxMaxWidth = `${euiTheme.base * 75}px`;
 
-  /** Size `s`: inline title + body share one wrapping context (icon sits in `NotificationIconLead`). */
+  /** Size `s`: inline title + body share one wrapping context (icon + copy share `notification-text-wrapper`). */
   const sLeadWrapCss = css`
     display: block;
     min-width: 0;
@@ -180,6 +180,9 @@ export function Callout({
   `;
 
   const wideLeadActionsMinWidth = `${layoutBreakpointPx}px`;
+  /** Narrow-only: indent actions so they line up with title/body (icon sits in `textWrapper`). */
+  const stackNarrowMaxWidth = `${Math.max(0, layoutBreakpointPx - 1)}px`;
+  const iconGlyphInlinePx = isS ? 16 : 20;
   const showPrimaryButton = !hidePrimaryButton;
   const showSecondaryButton = !hideSecondaryButton;
   const showActionButtons = showPrimaryButton || showSecondaryButton;
@@ -254,85 +257,94 @@ export function Callout({
           min-width: 0;
         `}
       >
-        <NotificationIconLead color={color} iconSlotPx={isS ? 16 : 20}>
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: ${blockGap};
+            min-width: 0;
+            flex: 1 1 auto;
+
+            @container callout (min-width: ${wideLeadActionsMinWidth}) {
+              flex-direction: row;
+              align-items: center;
+              gap: ${euiTheme.size.xxl};
+            }
+          `}
+        >
           <div
+            data-slot={notificationSlots.textWrapper}
             css={css`
               display: flex;
-              flex-direction: column;
-              align-items: stretch;
-              gap: ${blockGap};
+              flex-direction: row;
+              align-items: flex-start;
+              gap: ${euiTheme.size.s};
               min-width: 0;
-              flex: 1 1 auto;
+              max-width: 100%;
+              width: 100%;
 
               @container callout (min-width: ${wideLeadActionsMinWidth}) {
-                flex-direction: row;
-                align-items: center;
-                gap: ${euiTheme.size.xxl};
-
-                [data-slot='${notificationSlots.textWrapper}'] {
-                  flex: 1;
-                  min-width: 0;
-                }
+                flex: 1;
+                min-width: 0;
               }
             `}
           >
+            <NotificationIconBox>
+              <NotificationStatusIcon color={color} slotPx={isS ? 16 : 20} />
+            </NotificationIconBox>
             <div
-              data-slot={notificationSlots.textWrapper}
-              css={css`
-                min-width: 0;
-                max-width: 100%;
-              `}
+              data-slot={notificationSlots.textBox}
+              css={
+                isS
+                  ? css`
+                      display: block;
+                      min-width: 0;
+                      flex: 1 1 auto;
+                      max-width: ${textBoxMaxWidth};
+                    `
+                  : css`
+                      display: flex;
+                      flex-direction: column;
+                      align-items: stretch;
+                      gap: ${euiTheme.size.xs};
+                      min-width: 0;
+                      flex: 1 1 auto;
+                      max-width: ${textBoxMaxWidth};
+                      overflow-wrap: anywhere;
+                      word-break: break-word;
+                    `
+              }
             >
-              <div
-                data-slot={notificationSlots.textBox}
-                css={
-                  isS
-                    ? css`
-                        display: block;
-                        min-width: 0;
-                        max-width: ${textBoxMaxWidth};
-                      `
-                    : css`
-                        display: flex;
-                        flex-direction: column;
-                        align-items: stretch;
-                        gap: ${euiTheme.size.xs};
-                        min-width: 0;
-                        max-width: ${textBoxMaxWidth};
-                        overflow-wrap: anywhere;
-                        word-break: break-word;
-                      `
-                }
-              >
-                {isS ? (
-                  <div css={sLeadWrapCss}>
-                    <EuiTitle size="xxs">
-                      <h5 css={sLeadHeadingCss}>
-                        {title}
-                        {!hideDescription ? '.' : null}
-                      </h5>
-                    </EuiTitle>
-                    {!hideDescription && children != null ? (
-                      <>
-                        {' '}
-                        <EuiText size="s" component="span" css={sLeadBodyCss}>
-                          {children}
-                        </EuiText>
-                      </>
-                    ) : null}
-                  </div>
-                ) : (
-                  <>
-                    <EuiTitle size="xs">
-                      <h4>{title}</h4>
-                    </EuiTitle>
-                    {!hideDescription && children ? <EuiText size="s">{children}</EuiText> : null}
-                  </>
-                )}
-              </div>
+              {isS ? (
+                <div css={sLeadWrapCss}>
+                  <EuiTitle size="xxs">
+                    <h5 css={sLeadHeadingCss}>
+                      {title}
+                      {!hideDescription ? '.' : null}
+                    </h5>
+                  </EuiTitle>
+                  {!hideDescription && children != null ? (
+                    <>
+                      {' '}
+                      <EuiText size="s" component="span" css={sLeadBodyCss}>
+                        {children}
+                      </EuiText>
+                    </>
+                  ) : null}
+                </div>
+              ) : (
+                <>
+                  <EuiTitle size="xs">
+                    <h4>{title}</h4>
+                  </EuiTitle>
+                  {!hideDescription && children ? <EuiText size="s">{children}</EuiText> : null}
+                </>
+              )}
             </div>
+          </div>
 
-            {showActionButtons ? (
+          {showActionButtons ? (
               <div
                 data-slot={notificationSlots.buttonBox}
                 css={css`
@@ -342,10 +354,18 @@ export function Callout({
                   flex-direction: column;
                   justify-content: flex-end;
                   min-height: 0;
+                  box-sizing: border-box;
+                  width: 100%;
+
+                  @container callout (max-width: ${stackNarrowMaxWidth}) {
+                    padding-inline-start: calc(${iconGlyphInlinePx}px + ${euiTheme.size.s});
+                  }
 
                   @container callout (min-width: ${wideLeadActionsMinWidth}) {
                     flex-shrink: 0;
                     align-self: stretch;
+                    width: auto;
+                    padding-inline-start: 0;
                   }
                 `}
               >
@@ -409,8 +429,7 @@ export function Callout({
                 </EuiFlexGroup>
               </div>
             ) : null}
-          </div>
-        </NotificationIconLead>
+        </div>
       </div>
     </div>
   );

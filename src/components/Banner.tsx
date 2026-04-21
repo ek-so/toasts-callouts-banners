@@ -5,6 +5,7 @@ import {
   EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiIcon,
   EuiText,
   EuiTitle,
   useEuiTheme,
@@ -15,9 +16,9 @@ import { notificationSlots } from './notificationSlots';
 
 export type BannerSize = 'm' | 's' | 'l';
 
-/** Default artwork lives in `public/banners/` (served as `/banners/*.svg`); copied into `dist/banners/` on `yarn build`. */
-function defaultBannerArtSrc(size: BannerSize): string {
-  const file = size === 's' ? 'default-s' : size === 'l' ? 'default-l' : 'default-m';
+/** Default M/L vector art in `public/banners/` (`default-m.svg` / `default-l.svg`); copied into `dist/banners/` on build. */
+function defaultBannerVectorArtSrc(size: Exclude<BannerSize, 's'>): string {
+  const file = size === 'l' ? 'default-l' : 'default-m';
   const publicPath =
     typeof __webpack_public_path__ === 'string' && __webpack_public_path__ !== ''
       ? __webpack_public_path__
@@ -41,8 +42,8 @@ export type BannerProps = {
   children?: ReactNode;
   /**
    * Optional media override (e.g. `<img alt="" />` or `<EuiIcon />`).
-   * When omitted, the size-matched default artwork from `public/banners/` is shown (`default-s` / `default-m` / `default-l`.svg).
-   * Pass `null` to hide the image slot entirely.
+   * When omitted: size `s` uses `<EuiIcon type="addDataApp" size="xl" />`; `m` / `l` use default vector art from `public/banners/`; `l` + `screenshot` uses the specimen PNG instead of `default-l.svg`.
+   * Pass `null` to hide the lead slot entirely.
    */
   image?: ReactNode | null;
   /** `s` / `m` match callout spacing; `l` uses the same vertical content inset as `m` plus a wider horizontal shell (tokens). */
@@ -79,7 +80,7 @@ export type BannerProps = {
 
 /**
  * Full-width-style banner shell aligned to callout spacing and typography (no left stripe).
- * Sizes `m` / `s` match callout rhythm; `l` uses wider horizontal inset on the shell and content-box block padding. Default vector art per size is served from `public/banners/` (`/banners/*.svg`); size `l` may set `screenshot` to use `specimen-screenshot.png` in a **320×160** slot (`20×` / `10×` theme `base` px); override or hide with `image` / `image={null}`. Vector slots: 32×32 / 80×80 (`5×` theme `base` on M) / 120×120; image-to-copy gap `calc(0.75×size.base)` on `s` (12px when base is 16px) / `base` (`m`) / `l` (`l`). Default shell uses `backgroundBaseHighlighted` (or `backgroundBasePlain` when `onSubduedSpecimenPanel`); subdued border; body subdued; dismiss `text`.
+ * Sizes `m` / `s` match callout rhythm; `l` uses wider horizontal inset on the shell and content-box block padding. When `image` is omitted, size `s` uses `EuiIcon` (`addDataApp`, `xl`); `m` / `l` use default SVGs from `public/banners/`; `l` + `screenshot` uses `specimen-screenshot.png` in a **320×160** slot (`20×` / `10×` theme `base` px). Override or hide with `image` / `image={null}`. Lead slot: `2×` / `5×` / `7.5×` theme `base` (S / M / L); image-to-copy gap `calc(0.75×size.base)` on `s` (12px when base is 16px) / `base` (`m`) / `l` (`l`). Default shell uses `backgroundBaseHighlighted` (or `backgroundBasePlain` when `onSubduedSpecimenPanel`); subdued border; body subdued; dismiss `text`.
  * At container width ≥`layoutBreakpointPx` on the root, `notification-content-box` lays out lead and actions in a row with vertical centering (`align-items: center`) and `size.xxl` gap (~40px at default scale), matching wide callouts.
  */
 export function Banner({
@@ -157,26 +158,43 @@ export function Banner({
   const showPrimaryButton = !hidePrimaryButton;
   const showSecondaryButton = !hideSecondaryButton;
   const showActionButtons = showPrimaryButton || showSecondaryButton;
-  const defaultBannerSrc = defaultBannerArtSrc(size);
   const screenshotSrc = specimenBannerScreenshotSrc();
   const resolvedImage: ReactNode | null =
     image === undefined
-      ? (
-          <img
-            src={useScreenshotArt ? screenshotSrc : defaultBannerSrc}
-            alt=""
-            css={css`
-              display: block;
-              width: 100%;
-              height: 100%;
-              object-fit: ${useScreenshotArt ? 'cover' : 'contain'};
-              object-position: ${useScreenshotArt ? 'center' : 'unset'};
-            `}
-          />
-        )
+      ? useScreenshotArt
+        ? (
+            <img
+              src={screenshotSrc}
+              alt=""
+              css={css`
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+              `}
+            />
+          )
+        : isS
+          ? (
+              <EuiIcon type="addDataApp" size="xl" aria-hidden />
+            )
+          : (
+              <img
+                src={defaultBannerVectorArtSrc(size)}
+                alt=""
+                css={css`
+                  display: block;
+                  width: 100%;
+                  height: 100%;
+                  object-fit: contain;
+                  object-position: unset;
+                `}
+              />
+            )
       : image;
   const hasImage = resolvedImage != null;
-  /** Slot edge length for vector art: `xl` (32px), `5×base` (80px at 16px base) for M, or 7.5×base (120px) for L. */
+  /** Lead slot edge length (icon or legacy `<img>`): `xl` (32px) on S, `5×base` on M, `7.5×base` on L. */
   const imageSlotSize = isS
     ? euiTheme.size.xl
     : isL
@@ -237,11 +255,11 @@ export function Banner({
     }
   `;
 
-  /** Vertically center image slot and copy/actions on the row cross-axis (all banners with art). */
+  /** Top-align image slot with the copy/actions column (all banners with art). */
   const leadWithImageRowCss = css`
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     gap: ${leadImageRowGap};
     min-width: 0;
   `;
@@ -251,7 +269,7 @@ export function Banner({
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    align-self: center;
+    align-self: flex-start;
     gap: ${leadToActionsGap};
     flex: 1;
     min-width: 0;

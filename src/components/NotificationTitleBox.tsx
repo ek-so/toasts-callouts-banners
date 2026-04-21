@@ -89,18 +89,22 @@ export function NotificationStatusIcon({
 
 /**
  * Lead row: semantic status icon in {@link NotificationIconBox}, then a content region (`children`: title, body, actions, etc.).
- * Icon-to-copy gap is always `size.s` (8px at default scale) for M, S, and toast.
+ * `iconToCopyGap` defaults to `size.s` (8px); toasts and M callouts pass `size.m` (~12px).
  */
 export function NotificationIconLead({
   color,
   iconSlotPx,
+  iconToCopyGap,
   children,
 }: {
   color: NotificationSemanticColor;
   iconSlotPx: 16 | 20;
+  /** Horizontal space between icon box and copy; defaults to `euiTheme.size.s`. */
+  iconToCopyGap?: string;
   children: ReactNode;
 }) {
   const { euiTheme } = useEuiTheme();
+  const columnGap = iconToCopyGap ?? euiTheme.size.s;
   return (
     <EuiFlexGroup
       responsive={false}
@@ -110,7 +114,7 @@ export function NotificationIconLead({
       justifyContent="flexStart"
       css={css`
         min-width: 0;
-        column-gap: ${euiTheme.size.s};
+        column-gap: ${columnGap};
       `}
     >
       <EuiFlexItem grow={false}>

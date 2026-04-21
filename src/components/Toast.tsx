@@ -296,7 +296,7 @@ export function Toast({
           min-width: 0;
         `}
       >
-        <NotificationIconLead color={color} iconSlotPx={20}>
+        <NotificationIconLead color={color} iconSlotPx={20} iconToCopyGap={euiTheme.size.m}>
           <div
             css={css`
               display: flex;

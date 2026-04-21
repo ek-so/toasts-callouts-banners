@@ -153,7 +153,8 @@ export function Callout({
   const closeInset = dismissFromEdge;
   const closeInsetInline = dismissFromEdge;
   const blockGap = isS ? '8px' : euiTheme.size.m;
-  const actionsGutter = isS ? 'xs' : 's';
+  /** Primary ↔ secondary gap (`EuiFlexGroup`); `s` ≈ 8px at default scale (was `xs` on S). */
+  const actionsGutter = 's';
   /** Cap copy width (75 × theme base ≈ 1200px at default scale). */
   const textBoxMaxWidth = `${euiTheme.base * 75}px`;
 
@@ -183,6 +184,8 @@ export function Callout({
   /** Narrow-only: indent actions so they line up with title/body (icon sits in `textWrapper`). */
   const stackNarrowMaxWidth = `${Math.max(0, layoutBreakpointPx - 1)}px`;
   const iconGlyphInlinePx = isS ? 16 : 20;
+  /** `size.s` on S, `size.m` (~12px) on M — matches toast / `NotificationIconLead` spacing. */
+  const iconToCopyGap = isS ? euiTheme.size.s : euiTheme.size.m;
   const showPrimaryButton = !hidePrimaryButton;
   const showSecondaryButton = !hideSecondaryButton;
   const showActionButtons = showPrimaryButton || showSecondaryButton;
@@ -279,7 +282,7 @@ export function Callout({
               display: flex;
               flex-direction: row;
               align-items: flex-start;
-              gap: ${euiTheme.size.s};
+              gap: ${iconToCopyGap};
               min-width: 0;
               max-width: 100%;
               width: 100%;
@@ -358,7 +361,7 @@ export function Callout({
                   width: 100%;
 
                   @container callout (max-width: ${stackNarrowMaxWidth}) {
-                    padding-inline-start: calc(${iconGlyphInlinePx}px + ${euiTheme.size.s});
+                    padding-inline-start: calc(${iconGlyphInlinePx}px + ${iconToCopyGap});
                   }
 
                   @container callout (min-width: ${wideLeadActionsMinWidth}) {

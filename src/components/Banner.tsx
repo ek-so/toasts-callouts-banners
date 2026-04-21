@@ -146,9 +146,10 @@ export function Banner({
   /** Top/bottom padding for the inner body; size `s` uses shell padding instead (see `rootPadding`). */
   const contentPaddingBlock =
     size === 's' ? '0' : euiTheme.size.base;
-  const dismissFromEdge = `calc(${euiTheme.size.xs} + 4px)`;
-  const closeInset = dismissFromEdge;
-  const closeInsetInline = dismissFromEdge;
+  /** Dismiss cross: **4px** from top and right (`size.xs`). */
+  const dismissCrossInset = euiTheme.size.xs;
+  const closeInset = dismissCrossInset;
+  const closeInsetInline = dismissCrossInset;
   /** Stacked title ↔ body (text box): M matches toast (`size.xs`); L uses `size.s` (8px at default theme scale). */
   const titleBodyGap = size === 'm' ? euiTheme.size.xs : euiTheme.size.s;
   /** Lead stack ↔ action buttons: `s` on compact, `m` (≈12px) on M/L. */

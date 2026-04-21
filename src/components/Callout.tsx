@@ -154,10 +154,10 @@ export function Callout({
     : isS
       ? `12px ${euiTheme.size.base} 12px ${euiTheme.size.base}`
       : `${euiTheme.size.base} ${euiTheme.size.l} ${euiTheme.size.base} 16px`;
-  /** 10px from top/right at default scale: `size.xs` + `size.xs` + `border.width.thick`. */
-  const dismissFromEdge = `calc(${euiTheme.size.xs} + ${euiTheme.size.xs} + ${euiTheme.border.width.thick})`;
-  const closeInset = dismissFromEdge;
-  const closeInsetInline = dismissFromEdge;
+  /** Dismiss cross: **4px** from top and right (`size.xs`). */
+  const dismissCrossInset = euiTheme.size.xs;
+  const closeInset = dismissCrossInset;
+  const closeInsetInline = dismissCrossInset;
   const blockGap = isS ? '8px' : euiTheme.size.m;
   /** Primary ↔ secondary gap (`EuiFlexGroup`); `s` ≈ 8px at default scale (was `xs` on S). */
   const actionsGutter = 's';

@@ -114,7 +114,7 @@ function liveProgressFillColor(
 /**
  * Toast card aligned to Figma node 6150:6490 (Banners–toasts–callouts):
  * 3px top accent—solid stripe (2px radius) by default, or a live bar (`euiTheme.border.radius.small` on track + fill) when `liveDurationMs` is set—
- * absolutely positioned (not `::after`), 16px leading inset to the icon, 40px end padding for dismiss, `useEuiShadow('l')` so
+ * absolutely positioned (not `::after`), 16px leading inset to the icon, 40px end padding for dismiss, dismiss cross **7px** from top / **`size.xs`** from right, `useEuiShadow('l')` so
  * dark mode can add the refresh-variant floating border on `::after` without conflicting.
  * Primary CTA uses base `EuiButton` (`fill` from `primaryButtonFill`, default unfilled) + semantic `color`;
  * second action is `EuiButtonEmpty` (matches EUI guidance for action hierarchy).
@@ -229,8 +229,9 @@ export function Toast({
     pointer-events: none;
   `;
 
-  /** 10px from top/right at default scale: `size.xs` + `size.xs` + `border.width.thick`. */
-  const dismissFromEdge = `calc(${euiTheme.size.xs} + ${euiTheme.size.xs} + ${euiTheme.border.width.thick})`;
+  /** Toast dismiss: **7px** from top, **4px** from right (`size.xs`). */
+  const dismissCrossTop = '7px';
+  const dismissCrossRight = euiTheme.size.xs;
   const showPrimaryButton = !hidePrimaryButton;
   const showSecondaryButton = !hideSecondaryButton;
   const showActionButtons = showPrimaryButton || showSecondaryButton;
@@ -238,8 +239,8 @@ export function Toast({
   const closeCss = css`
     position: absolute;
     z-index: 3;
-    top: ${dismissFromEdge};
-    right: ${dismissFromEdge};
+    top: ${dismissCrossTop};
+    right: ${dismissCrossRight};
   `;
 
   const handleDismissClick = () => {

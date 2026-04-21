@@ -33,13 +33,13 @@ export type ToastProps = {
   hideSecondaryButton?: boolean;
   /** When true, primary CTA uses filled `EuiButton` (`fill`). */
   primaryButtonFill?: boolean;
-  /** When true, status lead icon uses filled glyphs where EUI provides them. */
+  /** Status lead icon uses filled glyphs by default; set `false` for outline icons. */
   filledIcons?: boolean;
   dismissable?: boolean;
   /**
    * When set to a positive finite duration (ms), the **top** 3px accent is a determinate bar
    * (`backgroundLight*` track, `backgroundFilled*` fill per semantic color; **warning** uses `borderStrongWarning` for
-   * the fill) for elapsed time vs this total—replacing
+   * the fill): fill starts at 100% width, anchored at inline-start, and depletes to 0% so its trailing edge moves toward inline-start (e.g. right-to-left in LTR)—replacing
    * the solid stripe—and `onDismiss` runs once when it elapses (in addition to manual dismiss).
    */
   liveDurationMs?: number;
@@ -113,7 +113,7 @@ function liveProgressFillColor(
 
 /**
  * Toast card aligned to Figma node 6150:6490 (Banners–toasts–callouts):
- * 3px top accent—solid stripe (2px radius) by default, or a live bar (`euiTheme.border.radius.small` on track + fill) when `liveDurationMs` is set—
+ * 3px top accent—solid stripe (2px radius) by default, or a live bar (`euiTheme.border.radius.small` on track + fill) when `liveDurationMs` is set (fill anchored inline-start, width 100%→0%, trailing edge moves right to left in LTR)—
  * absolutely positioned (not `::after`), 16px leading inset to the icon, 40px end padding for dismiss, dismiss cross **7px** from top / **`size.xs`** from right, `useEuiShadow('l')` so
  * dark mode can add the refresh-variant floating border on `::after` without conflicting.
  * Primary CTA uses base `EuiButton` (`fill` from `primaryButtonFill`, default unfilled) + semantic `color`;
@@ -133,7 +133,7 @@ export function Toast({
   hidePrimaryButton = false,
   hideSecondaryButton = false,
   primaryButtonFill = false,
-  filledIcons = false,
+  filledIcons = true,
   dismissable = true,
   liveDurationMs,
   liveProgressResetKey = 0,
@@ -145,7 +145,7 @@ export function Toast({
   /** Top solid stripe and live countdown bar (spec). */
   const topAccentHeight = '3px';
   const specimenBorderRadius = '2px';
-  /** Live progress track + fill: single theme radius on all corners (`1×` = `border.radius.small`). */
+  /** Live progress track: uniform theme radius; fill uses `1 1 1 0` (TL, TR, BR, BL) with `border.radius.small` for the rounded corners. */
   const liveProgressRadius = euiTheme.border.radius.small;
   const shadowStyles = useEuiShadow('l', { borderAllInHighContrastMode: false });
   const paddingEnd = dismissable ? '40px' : euiTheme.size.base;
@@ -249,10 +249,15 @@ export function Toast({
   };
 
   const liveDuration = showLiveProgress ? (liveDurationMs as number) : 0;
-  const liveProgressPct =
+  const elapsedPct =
     showLiveProgress && liveDuration > 0
       ? Math.min(100, (100 * elapsedMs) / liveDuration)
       : 0;
+  /** Fill width depletes 100% → 0% (remaining time); start-aligned so the trailing edge travels toward inline-start (LTR: right to left). */
+  const liveFillRemainingPct = 100 - elapsedPct;
+  const liveRemainingMs = showLiveProgress
+    ? Math.max(0, liveDuration - Math.min(elapsedMs, liveDuration))
+    : 0;
   const liveProgressTrack = liveProgressTrackColor(euiTheme, color);
   const liveProgressFill = liveProgressFillColor(euiTheme, color);
   /** Same footprint as the solid stripe: full-width top band, `backgroundLight*` track + fill (`backgroundFilled*`, warning: `borderStrongWarning`). */
@@ -267,12 +272,16 @@ export function Toast({
     border-radius: ${liveProgressRadius};
     pointer-events: none;
     background-color: ${liveProgressTrack};
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
   `;
   const liveProgressFillCss = css`
     height: 100%;
-    width: ${liveProgressPct}%;
+    width: ${liveFillRemainingPct}%;
     max-width: 100%;
-    border-radius: ${liveProgressRadius};
+    flex-shrink: 0;
+    border-radius: ${liveProgressRadius} ${liveProgressRadius} ${liveProgressRadius} 0;
     background-color: ${liveProgressFill};
   `;
 
@@ -291,7 +300,7 @@ export function Toast({
           aria-label="Auto-dismiss progress"
           aria-valuemin={0}
           aria-valuemax={liveDuration}
-          aria-valuenow={Math.round(elapsedMs)}
+          aria-valuenow={Math.round(liveRemainingMs)}
           data-test-subj="toast-live-progress"
           css={liveTopAccentTrackCss}
         >

@@ -43,7 +43,7 @@ export type CalloutProps = {
   hideSecondaryButton?: boolean;
   /** When true, primary CTA uses filled `EuiButton` (`fill`). */
   primaryButtonFill?: boolean;
-  /** When true, status lead icon uses filled glyphs where EUI provides them. */
+  /** Status lead icon uses filled glyphs by default; set `false` for outline icons. */
   filledIcons?: boolean;
   /** When false, the dismiss control is hidden and end padding is reduced (specimen chrome). */
   dismissable?: boolean;
@@ -132,7 +132,7 @@ export function Callout({
   hidePrimaryButton = false,
   hideSecondaryButton = false,
   primaryButtonFill = false,
-  filledIcons = false,
+  filledIcons = true,
   dismissable = true,
 }: CalloutProps) {
   const { euiTheme } = useEuiTheme();

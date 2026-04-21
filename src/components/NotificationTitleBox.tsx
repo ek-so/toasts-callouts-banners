@@ -6,7 +6,7 @@ import { notificationSlots } from './notificationSlots';
 
 export type NotificationSemanticColor = 'success' | 'warning' | 'danger' | 'neutral';
 
-/** Custom filled art for specimen “Filled icons” toggle (served from `public/`). */
+/** Custom filled art for neutral/info and warning (served from `public/`). */
 const FILLED_STATUS_INFO_SRC = '/notification-icons/filled-info.svg';
 const FILLED_STATUS_WARNING_SRC = '/notification-icons/filled-warning.svg';
 
@@ -93,7 +93,7 @@ export function NotificationIconBox({ children }: { children: ReactNode }) {
 export function NotificationStatusIcon({
   color,
   slotPx = 16,
-  filled = false,
+  filled = true,
 }: {
   color: NotificationSemanticColor;
   slotPx?: 16 | 20;
@@ -117,14 +117,14 @@ export function NotificationIconLead({
   color,
   iconSlotPx,
   iconToCopyGap,
-  statusIconFilled = false,
+  statusIconFilled = true,
   children,
 }: {
   color: NotificationSemanticColor;
   iconSlotPx: 16 | 20;
   /** Horizontal space between icon box and copy; defaults to `euiTheme.size.s`. */
   iconToCopyGap?: string;
-  /** Use filled status glyphs where available (toast / callout specimens). */
+  /** Use filled status glyphs where available (toast / callout). */
   statusIconFilled?: boolean;
   children: ReactNode;
 }) {

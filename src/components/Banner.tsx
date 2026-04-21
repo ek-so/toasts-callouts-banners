@@ -80,7 +80,7 @@ export type BannerProps = {
 
 /**
  * Full-width-style banner shell aligned to callout spacing and typography (no left stripe).
- * Sizes `m` / `s` match callout rhythm; `l` uses wider horizontal inset on the shell and content-box block padding. When `image` is omitted, size `s` uses `EuiIcon` (`addDataApp`, `xl`); `m` / `l` use default SVGs from `public/banners/`; `l` + `screenshot` uses `specimen-screenshot.png` in a **320×160** slot (`20×` / `10×` theme `base` px). Override or hide with `image` / `image={null}`. Lead slot: `2×` / `5×` / `7.5×` theme `base` (S / M / L); image-to-copy gap `calc(0.75×size.base)` on `s` (12px when base is 16px) / `base` (`m`) / `l` (`l`). Default shell uses `backgroundBaseHighlighted` (or `backgroundBasePlain` when `onSubduedSpecimenPanel`); subdued border; body subdued; dismiss `text`.
+ * Sizes `m` / `s` match callout rhythm; `l` uses wider horizontal inset on the shell and content-box block padding. When `image` is omitted, size `s` uses `EuiIcon` (`addDataApp`, `xl`); `m` / `l` use default SVGs from `public/banners/`; `l` + `screenshot` uses `specimen-screenshot.png` in a **320×160** slot (`20×` / `10×` theme `base` px). Override or hide with `image` / `image={null}`. Lead slot: `2×` / `5×` / `7.5×` theme `base` (S / M / L); image-to-copy gap `size.base` on `s` (~16px at default scale) / `base` (`m`) / `l` (`l`). Default shell uses `backgroundBaseHighlighted` (or `backgroundBasePlain` when `onSubduedSpecimenPanel`); subdued border; body subdued; dismiss `text`.
  * At container width ≥`layoutBreakpointPx` on the root, `notification-content-box` lays out lead and actions in a row with vertical centering (`align-items: center`) and `size.xxl` gap (~40px at default scale), matching wide callouts.
  */
 export function Banner({
@@ -116,7 +116,7 @@ export function Banner({
 
   /**
    * Shell padding (top / right / bottom / left). Size L with `screenshot` art: `size.base` (~16px) start inset.
-   * Otherwise same as before: `s` / `m` dismissable ends; L `xxl`/`xl`; non-dismissable tightening.
+   * Size `s` start inset: `1.25×` theme `base` (~20px at 16px base). Otherwise: `s` / `m` dismissable ends; L `xxl`/`xl`; non-dismissable tightening.
    */
   const padTop = isS ? '12px' : '0';
   const padBottom = isS ? '12px' : '0';
@@ -134,7 +134,7 @@ export function Banner({
   const padLeft = useScreenshotArt
     ? euiTheme.size.base
     : isS
-      ? euiTheme.size.base
+      ? `${euiTheme.base * 1.25}px`
       : isL
         ? euiTheme.size.xl
         : `${euiTheme.base * 1.25}px`;
@@ -203,9 +203,9 @@ export function Banner({
   /** Screenshot specimen slot: 320×160 at default scale (`20` / `10` × theme `base` px). */
   const screenshotSlotWidth = `${euiTheme.base * 20}px`;
   const screenshotSlotHeight = `${euiTheme.base * 10}px`;
-  /** `s`: 12px at default scale via `0.75 × size.base`; `m`: `base`; `l`: `l`. */
+  /** `s`: `size.base` (~16px at default scale); `m`: `base`; `l`: `l`. */
   const imageLeadGap = isS
-    ? `calc(${euiTheme.size.base} * 0.75)`
+    ? euiTheme.size.base
     : isL
       ? euiTheme.size.l
       : euiTheme.size.base;
@@ -236,7 +236,7 @@ export function Banner({
       display: inline;
     }
     margin-block: 0;
-    margin-inline-start: 2px;
+    margin-inline-start: ${euiTheme.border.width.thick};
     vertical-align: baseline;
   `;
 
@@ -255,11 +255,11 @@ export function Banner({
     }
   `;
 
-  /** Top-align image slot with the copy/actions column (all banners with art). */
+  /** Vertically center image slot with the copy + actions column (all banners with art). */
   const leadWithImageRowCss = css`
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
     gap: ${leadImageRowGap};
     min-width: 0;
   `;
@@ -269,7 +269,7 @@ export function Banner({
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    align-self: flex-start;
+    align-self: center;
     gap: ${leadToActionsGap};
     flex: 1;
     min-width: 0;
@@ -391,12 +391,9 @@ export function Banner({
             </h5>
           </EuiTitle>
           {!hideDescription && children != null ? (
-            <>
-              {' '}
-              <EuiText size="s" component="span" color="subdued" css={sLeadBodyCss}>
-                {children}
-              </EuiText>
-            </>
+            <EuiText size="s" component="span" color="subdued" css={sLeadBodyCss}>
+              {children}
+            </EuiText>
           ) : null}
         </div>
       ) : (

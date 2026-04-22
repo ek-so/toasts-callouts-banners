@@ -457,7 +457,7 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
   const [showDescription, setShowDescription] = useState(true);
   /** When `true`, specimen shows primary and secondary CTAs (switch on by default). */
   const [showActionButtons, setShowActionButtons] = useState(true);
-  /** When `true` and action buttons are on, specimen shows the secondary CTA. */
+  /** When `true` and action buttons are on, specimen shows the secondary CTA (callouts and banners; toasts never show a secondary CTA). */
   const [showSecondaryButton, setShowSecondaryButton] = useState(true);
   /** When `true`, primary CTA uses filled `EuiButton`. */
   const [filledPrimaryButton, setFilledPrimaryButton] = useState(false);
@@ -782,7 +782,7 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
                 onChange={(e) => setShowActionButtons(e.target.checked)}
               />
             </EuiFlexItem>
-            {showActionButtons ? (
+            {showActionButtons && selectedTab !== 'toasts' ? (
               <EuiFlexItem grow={false}>
                 <EuiSwitch
                   label="Secondary btn"
@@ -845,7 +845,9 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
               dismissable={dismissable}
               hideDescription={!showDescription}
               hidePrimaryButton={!showActionButtons}
-              hideSecondaryButton={!showActionButtons || !showSecondaryButton}
+              hideSecondaryButton={
+                !showActionButtons || selectedTab === 'toasts' || !showSecondaryButton
+              }
               primaryButtonFill={selectedTab === 'banners' ? filledPrimaryButton : false}
               layoutBreakpointPx={narrowMaxWidthPx}
               specimenDescription={specimenCopy[selectedTab].description}

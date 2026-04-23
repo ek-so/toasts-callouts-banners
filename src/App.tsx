@@ -74,6 +74,7 @@ function BannerSizeSection({
   onSubduedSpecimenPanel,
   specimenDescription,
   specimenTitle,
+  screenshotPaddings,
 }: {
   size: BannerSize;
   layoutBreakpointPx: number;
@@ -85,6 +86,7 @@ function BannerSizeSection({
   onSubduedSpecimenPanel: boolean;
   specimenDescription: string;
   specimenTitle: string;
+  screenshotPaddings: boolean;
 }) {
   return (
     <>
@@ -106,6 +108,7 @@ function BannerSizeSection({
             layoutBreakpointPx={layoutBreakpointPx}
             onSubduedSpecimenPanel={onSubduedSpecimenPanel}
             screenshot
+            screenshotPaddings={screenshotPaddings}
             size={size}
             title={specimenTitle}
           >
@@ -144,6 +147,7 @@ function TopicPanel({
   specimenDescription,
   specimenTitle,
   toastLiveResetKey,
+  screenshotPaddings,
 }: {
   topic: TopicTab;
   layoutBreakpointPx: number;
@@ -158,6 +162,7 @@ function TopicPanel({
   specimenTitle: string;
   /** Passed to toast specimens so “Reset progress” can restart the top live bar. */
   toastLiveResetKey: number;
+  screenshotPaddings: boolean;
 }) {
   switch (topic) {
     case 'toasts':
@@ -388,6 +393,7 @@ function TopicPanel({
             onSubduedSpecimenPanel={bannersPanelMode === 'subdued'}
             specimenDescription={specimenDescription}
             specimenTitle={specimenTitle}
+            screenshotPaddings={screenshotPaddings}
             size="l"
           />
           <EuiFlexItem grow={false}>
@@ -403,6 +409,7 @@ function TopicPanel({
             onSubduedSpecimenPanel={bannersPanelMode === 'subdued'}
             specimenDescription={specimenDescription}
             specimenTitle={specimenTitle}
+            screenshotPaddings={screenshotPaddings}
             size="m"
           />
           <EuiFlexItem grow={false}>
@@ -418,6 +425,7 @@ function TopicPanel({
             onSubduedSpecimenPanel={bannersPanelMode === 'subdued'}
             specimenDescription={specimenDescription}
             specimenTitle={specimenTitle}
+            screenshotPaddings={screenshotPaddings}
             size="s"
           />
         </EuiFlexGroup>
@@ -446,6 +454,7 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
   /** When `true`, primary CTA uses filled `EuiButton`. */
   const [filledPrimaryButton, setFilledPrimaryButton] = useState(false);
   const [dismissable, setDismissable] = useState(true);
+  const [screenshotPaddings, setScreenshotPaddings] = useState(false);
   const [bannersPanelMode, setBannersPanelMode] = useState<BannersPanelMode>('plain');
   const [selectedTab, setSelectedTab] = useState<TopicTab>('callouts');
   const [contentWidth, setContentWidth] = useState<AppContentWidth>('narrow');
@@ -812,6 +821,16 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
               </EuiFormRow>
             </>
           ) : null}
+          {selectedTab === 'banners' ? (
+            <>
+              <EuiSpacer size="m" />
+              <EuiSwitch
+                label="Screenshot paddings"
+                checked={screenshotPaddings}
+                onChange={(e) => setScreenshotPaddings(e.target.checked)}
+              />
+            </>
+          ) : null}
           <EuiSpacer size="l" />
 
           <EuiPanel
@@ -838,6 +857,7 @@ export function App({ colorMode, onColorModeChange }: AppProps) {
               specimenTitle={specimenCopy[selectedTab].title}
               toastLiveResetKey={toastLiveResetKey}
               topic={selectedTab}
+              screenshotPaddings={screenshotPaddings}
             />
           </EuiPanel>
         </div>

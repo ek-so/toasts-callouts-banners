@@ -259,11 +259,10 @@ export function Banner({
     }
   `;
 
-  /** Vertically center image slot with the copy + actions column (all banners with art). */
   const leadWithImageRowCss = css`
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     gap: ${leadImageRowGap};
     min-width: 0;
   `;
@@ -272,8 +271,8 @@ export function Banner({
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: flex-start;
-    align-self: center;
+    justify-content: center;
+    align-self: stretch;
     gap: ${leadToActionsGap};
     flex: 1;
     min-width: 0;

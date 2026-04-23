@@ -128,22 +128,6 @@ function BannerSizeSection({
           {specimenDescription}
         </Banner>
       </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <Banner
-          dismissable={dismissable}
-          hideDescription={hideDescription}
-          hidePrimaryButton={hidePrimaryButton}
-          primaryButtonFill={primaryButtonFill}
-          hideSecondaryButton={hideSecondaryButton}
-          layoutBreakpointPx={layoutBreakpointPx}
-          onSubduedSpecimenPanel={onSubduedSpecimenPanel}
-          size={size}
-          image={null}
-          title={specimenTitle}
-        >
-          {specimenDescription}
-        </Banner>
-      </EuiFlexItem>
     </>
   );
 }

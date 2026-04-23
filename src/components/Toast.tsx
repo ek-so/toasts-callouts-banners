@@ -148,7 +148,7 @@ export function Toast({
   /** Live progress track: uniform theme radius; fill uses `1 1 1 0` (TL, TR, BR, BL) with `border.radius.small` for the rounded corners. */
   const liveProgressRadius = euiTheme.border.radius.small;
   const shadowStyles = useEuiShadow('l', { borderAllInHighContrastMode: false });
-  const paddingEnd = dismissable ? euiTheme.size.xl : euiTheme.size.base;
+  const paddingEnd = dismissable ? euiTheme.size.l : euiTheme.size.base;
   const paddingTopWithStripe = `calc(${topAccentHeight} + ${euiTheme.size.base})`;
   const showLiveProgress =
     typeof liveDurationMs === 'number' && liveDurationMs > 0 && Number.isFinite(liveDurationMs);

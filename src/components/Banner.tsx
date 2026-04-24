@@ -125,7 +125,7 @@ export function Banner({
         ? euiTheme.size.xxl
         : '40px'
     : isS
-      ? euiTheme.size.base
+      ? `${euiTheme.base * 1.25}px`
       : isL
         ? euiTheme.size.xxl
         : euiTheme.size.l;

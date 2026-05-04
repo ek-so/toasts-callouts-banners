@@ -113,8 +113,8 @@ function liveProgressFillColor(
 
 /**
  * Toast card aligned to Figma node 6150:6490 (Banners–toasts–callouts):
- * 3px top accent—solid stripe (2px radius) by default, or a live bar (`euiTheme.border.radius.small` on track + fill) when `liveDurationMs` is set (fill anchored inline-start, width 100%→0%, trailing edge moves right to left in LTR)—
- * absolutely positioned (not `::after`), 16px leading inset to the icon, `size.xl` end padding for dismiss (32px), dismiss cross **7px** from top / **`size.xs`** from right, `useEuiShadow('l')` so
+ * 3px top accent—solid stripe (4px radius) by default, or a live bar (`euiTheme.border.radius.small` on track + fill) when `liveDurationMs` is set (fill anchored inline-start, width 100%→0%, trailing edge moves right to left in LTR)—
+ * absolutely positioned (not `::after`), 16px leading inset to the icon, `size.xl` end padding for dismiss (32px), dismiss cross **`size.s`** from top and right (~8px at default scale), `useEuiShadow('l')` so
  * dark mode can add the refresh-variant floating border on `::after` without conflicting.
  * Primary CTA uses base `EuiButton` (`fill` from `primaryButtonFill`, default unfilled) + semantic `color`;
  * second action is `EuiButtonEmpty` (matches EUI guidance for action hierarchy).
@@ -144,7 +144,7 @@ export function Toast({
   const btnColor = buttonColor(color);
   /** Top solid stripe and live countdown bar (spec). */
   const topAccentHeight = '3px';
-  const specimenBorderRadius = '2px';
+  const specimenBorderRadius = '4px';
   /** Live progress track: uniform theme radius; fill uses `1 1 1 0` (TL, TR, BR, BL) with `border.radius.small` for the rounded corners. */
   const liveProgressRadius = euiTheme.border.radius.small;
   const shadowStyles = useEuiShadow('l', { borderAllInHighContrastMode: false });
@@ -229,9 +229,9 @@ export function Toast({
     pointer-events: none;
   `;
 
-  /** Toast dismiss: **7px** from top, **4px** from right (`size.xs`). */
-  const dismissCrossTop = '7px';
-  const dismissCrossRight = euiTheme.size.xs;
+  /** Toast dismiss: **8px** from top and right (`size.s`). */
+  const dismissCrossTop = euiTheme.size.s;
+  const dismissCrossRight = euiTheme.size.s;
   const showPrimaryButton = !hidePrimaryButton;
   const showSecondaryButton = !hideSecondaryButton;
   const showActionButtons = showPrimaryButton || showSecondaryButton;

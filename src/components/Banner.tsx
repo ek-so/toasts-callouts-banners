@@ -106,7 +106,7 @@ export function Banner({
     : euiTheme.colors.backgroundBaseHighlighted;
   const edge = euiTheme.colors.borderBaseSubdued;
   const btnColor = 'primary';
-  const specimenBorderRadius = '2px';
+  const specimenBorderRadius = '4px';
   const thin = euiTheme.border.width.thin;
   const isS = size === 's';
   const isL = size === 'l';
@@ -143,8 +143,8 @@ export function Banner({
   /** Top/bottom padding for the inner body; size `s` uses shell padding instead (see `rootPadding`). */
   const contentPaddingBlock =
     size === 's' || (useScreenshotArt && !screenshotPaddings) ? '0' : euiTheme.size.base;
-  /** Dismiss cross: **4px** from top and right (`size.xs`). */
-  const dismissCrossInset = euiTheme.size.xs;
+  /** Dismiss cross: **8px** from top and right (`size.s`). */
+  const dismissCrossInset = euiTheme.size.s;
   const closeInset = dismissCrossInset;
   const closeInsetInline = dismissCrossInset;
   /** Stacked title ↔ body (text box): M matches toast (`size.xs`); L uses `size.s` (8px at default theme scale). */

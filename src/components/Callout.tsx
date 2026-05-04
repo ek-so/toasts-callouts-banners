@@ -112,7 +112,7 @@ function buttonColor(color: CalloutColor): 'primary' | 'success' | 'warning' | '
 }
 
 /**
- * Callout: `backgroundBase*`, thin `borderBase*` on three sides, 3px left stripe (`::after`, `1px` radius).
+ * Callout: `backgroundBase*`, thin `borderBase*` on three sides, 3px left stripe (`::after`). Leading corners **2px** (stripe side); trailing corners **4px**.
  * `size="m"` — status icon (20px) in {@link NotificationIconBox}, beside copy: `EuiTitle` `xs`, body (`EuiText` `s`), `xs` gap. `size="s"` — 16px icon, then inline `EuiTitle` `xxs` + inline body (shared baseline).
  * The icon box lives **inside** `notification-text-wrapper` next to the text box (same in narrow and wide). At container width ≥`layoutBreakpointPx`, that wrapper and actions form a row (`align-items: center`, `size.xxl` gap).
  */
@@ -140,9 +140,9 @@ export function Callout({
   const edge = calloutBorder(euiTheme, color);
   const leftAccent = calloutLeftAccent(euiTheme, color);
   const btnColor = buttonColor(color);
-  const specimenBorderRadius = '2px';
-  /** Left accent stripe only (not the callout shell). */
-  const calloutStripeBorderRadius = '1px';
+  const specimenBorderRadius = '4px';
+  /** Leading edge (stripe side): tighter radius than trailing `specimenBorderRadius`. */
+  const calloutLeadingBorderRadius = '2px';
   const thin = euiTheme.border.width.thin;
   const leftStripe = '3px';
   const isS = size === 's';
@@ -154,8 +154,8 @@ export function Callout({
     : isS
       ? `12px ${euiTheme.size.base} 12px ${euiTheme.size.base}`
       : `${euiTheme.size.base} ${euiTheme.size.l} ${euiTheme.size.base} 16px`;
-  /** Dismiss cross: **4px** from top and right (`size.xs`). */
-  const dismissCrossInset = euiTheme.size.xs;
+  /** Dismiss cross: **8px** from top and right (`size.s`). */
+  const dismissCrossInset = euiTheme.size.s;
   const closeInset = dismissCrossInset;
   const closeInsetInline = dismissCrossInset;
   const blockGap = isS ? '8px' : euiTheme.size.m;
@@ -204,7 +204,10 @@ export function Callout({
     min-width: 0;
     container-type: inline-size;
     container-name: callout;
-    border-radius: ${specimenBorderRadius};
+    border-top-left-radius: ${calloutLeadingBorderRadius};
+    border-bottom-left-radius: ${calloutLeadingBorderRadius};
+    border-top-right-radius: ${specimenBorderRadius};
+    border-bottom-right-radius: ${specimenBorderRadius};
     overflow: hidden;
     background-color: ${bg};
     border-top: ${thin} solid ${edge};
@@ -223,7 +226,8 @@ export function Callout({
       bottom: 0;
       width: ${leftStripe};
       background-color: ${leftAccent};
-      border-radius: ${calloutStripeBorderRadius};
+      border-top-left-radius: ${calloutLeadingBorderRadius};
+      border-bottom-left-radius: ${calloutLeadingBorderRadius};
       pointer-events: none;
     }
   `;

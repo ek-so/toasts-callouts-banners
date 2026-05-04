@@ -18,6 +18,8 @@ export function BannerScreenshot({
   const { euiTheme } = useEuiTheme();
   const width = `${euiTheme.base * 20}px`;
   const minHeight = `${euiTheme.base * 10}px`;
+  /** Same as banner `specimenBorderRadius`; only the outer (leading) corners — inline-end stays square against copy. */
+  const screenshotLeadingRadius = '4px';
 
   return (
     <div
@@ -29,7 +31,10 @@ export function BannerScreenshot({
         align-self: stretch;
         flex-shrink: 0;
         overflow: hidden;
-        border-radius: ${euiTheme.border.width.thin};
+        border-top-left-radius: ${screenshotLeadingRadius};
+        border-bottom-left-radius: ${screenshotLeadingRadius};
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
         box-sizing: border-box;
         background-image: url(${assetSrc('screenshot.png')}), url(${assetSrc('screenshot-bg.png')});
         background-size: contain, cover;
